@@ -11,7 +11,7 @@ const fade = (delay = 0) => ({
   transition: { delay, duration: 0.7, ease: [0.16, 1, 0.3, 1] as const },
 });
 
-export function Hero({ initialCount }: { initialCount: number }) {
+export function Hero() {
   return (
     <section className="relative isolate overflow-hidden bg-hero-radial">
       <div aria-hidden className="absolute inset-0 grid-floor" />
@@ -34,8 +34,8 @@ export function Hero({ initialCount }: { initialCount: number }) {
           No app to install, no data plan to burn.
         </motion.p>
 
-        <motion.div {...fade(0.45)} className="mt-8 w-full">
-          <WaitlistForm initialCount={initialCount} />
+        <motion.div {...fade(0.45)} className="mt-10 w-full">
+          <WaitlistForm />
         </motion.div>
 
         <div

@@ -1,105 +1,107 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import LiquidGlass from "@nkzw/liquid-glass";
-import { Counter } from "./counter";
+import { Toast, type ToastTone } from "./toast";
 
 type Status = "idle" | "loading" | "success" | "error";
 
-export function WaitlistForm({ initialCount }: { initialCount: number }) {
+function Spinner() {
+  return (
+    <svg
+      className="h-4 w-4 animate-spin"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden
+    >
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeOpacity="0.25" strokeWidth="3" />
+      <path
+        d="M21 12a9 9 0 0 1-9 9"
+        stroke="currentColor"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+export function WaitlistForm() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
-  const [message, setMessage] = useState<string>("");
-  const [count, setCount] = useState(initialCount);
+  const [toast, setToast] = useState<{ message: string; tone: ToastTone } | null>(null);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (status === "loading") return;
     setStatus("loading");
-    setMessage("");
     try {
       const res = await fetch("/api/waitlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
-      const data = (await res.json()) as { ok: boolean; count?: number; error?: string };
+      const data = (await res.json()) as { ok: boolean; error?: string; duplicate?: boolean };
       if (!res.ok || !data.ok) {
         setStatus("error");
-        setMessage(data.error ?? "Something blocked your signup. Try again.");
+        setToast({
+          message: data.error ?? "Something blocked your signup. Try again.",
+          tone: "error",
+        });
         return;
       }
       setStatus("success");
-      setMessage("You're on the list. Watch your inbox.");
-      if (typeof data.count === "number") setCount(data.count);
+      setToast({
+        message: data.duplicate
+          ? "You're already on the list. We'll be in touch."
+          : "You're on the list. Watch your inbox.",
+        tone: "success",
+      });
       setEmail("");
     } catch {
       setStatus("error");
-      setMessage("Network failed. Try again.");
+      setToast({ message: "Network failed. Try again.", tone: "error" });
     }
   }
 
   return (
-    <div className="w-full">
-      <div className="mx-auto flex w-full max-w-md justify-center">
-        <LiquidGlass
-          borderRadius={100}
-          padding="6px"
-          blurAmount={0.1}
-          displacementScale={36}
-          elasticity={0.22}
-          saturation={130}
+    <>
+      <form
+        onSubmit={onSubmit}
+        className="glass shadow-glass mx-auto flex w-full max-w-md items-center gap-2 rounded-full p-2"
+      >
+        <input
+          type="email"
+          required
+          inputMode="email"
+          autoComplete="email"
+          placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          aria-label="Email address"
+          disabled={status === "loading"}
+          className="h-12 flex-1 min-w-0 rounded-full bg-transparent px-5 text-base text-white placeholder:text-white/55 focus:outline-none disabled:opacity-60"
+        />
+        <button
+          type="submit"
+          disabled={status === "loading"}
+          className="grid h-12 shrink-0 grid-flow-col items-center gap-2 rounded-full bg-white px-6 text-sm font-medium text-navy transition hover:bg-accent hover:text-ink disabled:cursor-not-allowed disabled:bg-white/85"
+          aria-busy={status === "loading"}
         >
-          <form
-            onSubmit={onSubmit}
-            className="flex w-[min(28rem,calc(100vw-3rem))] items-center gap-1"
-          >
-            <input
-              type="email"
-              required
-              inputMode="email"
-              autoComplete="email"
-              placeholder="Enter your email address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              aria-label="Email address"
-              className="h-11 flex-1 min-w-0 rounded-full bg-transparent px-5 text-sm text-white placeholder:text-white/60 focus:outline-none"
-            />
-            <button
-              type="submit"
-              disabled={status === "loading"}
-              className="h-11 shrink-0 rounded-full bg-white px-4 text-sm font-medium text-navy transition hover:bg-accent hover:text-ink disabled:opacity-60"
-            >
-              {status === "loading" ? "Joining..." : "Join Waitlist"}
-            </button>
-          </form>
-        </LiquidGlass>
-      </div>
-
-      <div className="relative mt-8 flex flex-col items-center gap-1 text-center">
-        <p className="text-sm text-white/70">
-          <Counter target={count} /> people already joined
-        </p>
-        <AnimatePresence mode="wait">
-          {message && (
-            <motion.p
-              key={message}
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className={
-                status === "success"
-                  ? "text-xs text-accent"
-                  : "text-xs text-rose-300"
-              }
-              role={status === "error" ? "alert" : "status"}
-            >
-              {message}
-            </motion.p>
+          {status === "loading" ? (
+            <>
+              <Spinner />
+              <span>Joining</span>
+            </>
+          ) : (
+            <span>Join Waitlist</span>
           )}
-        </AnimatePresence>
-      </div>
-    </div>
+        </button>
+      </form>
+
+      <Toast
+        message={toast?.message ?? null}
+        tone={toast?.tone ?? "success"}
+        onDismiss={() => setToast(null)}
+      />
+    </>
   );
 }

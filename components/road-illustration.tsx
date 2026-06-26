@@ -3,7 +3,8 @@
 /**
  * Top-down view of wavy roads with vehicles cruising along them.
  * Pure inline SVG so it stays under a few kilobytes.
- * Cars follow the actual road paths using <animateMotion>.
+ * Cars follow each road via <animateMotion>. Roads fade into the
+ * surrounding navy gradient at the top and bottom.
  */
 
 type Lane = {
@@ -11,7 +12,7 @@ type Lane = {
   path: string;
   /** Pixel width of the painted road */
   width: number;
-  /** Animation duration in seconds */
+  /** Animation duration in seconds (one full lap) */
   duration: number;
   /** Delay before the first lap */
   delay: number;
@@ -56,20 +57,28 @@ const lanes: Lane[] = [
   },
 ];
 
+/**
+ * Vehicles are drawn pointing along +Y (the direction of travel down the road)
+ * so animateMotion's rotate="auto" (which rotates the local X axis to the
+ * tangent) leaves them oriented correctly when paths run vertically.
+ *
+ * Length axis = Y (taller than wide), front of vehicle at y = -length/2,
+ * tail at y = +length/2.
+ */
 function Vehicle({ kind, color }: { kind: Lane["vehicle"]; color: string }) {
   switch (kind) {
     case "sedan":
       return (
-        <g>
+        <g transform="rotate(90)">
           <rect x="-9" y="-16" width="18" height="32" rx="5" fill={color} />
           <rect x="-6" y="-9" width="12" height="11" rx="2" fill="rgba(11,18,59,0.55)" />
-          <rect x="-7" y="-15" width="14" height="2" rx="1" fill="rgba(255,255,255,0.5)" />
+          <rect x="-7" y="-15" width="14" height="2" rx="1" fill="rgba(255,255,255,0.55)" />
           <rect x="-7" y="13" width="14" height="2" rx="1" fill="rgba(255,80,80,0.7)" />
         </g>
       );
     case "suv":
       return (
-        <g>
+        <g transform="rotate(90)">
           <rect x="-10" y="-18" width="20" height="36" rx="5" fill={color} />
           <rect x="-7" y="-10" width="14" height="14" rx="2" fill="rgba(11,18,59,0.6)" />
           <rect x="-8" y="-17" width="16" height="2" rx="1" fill="rgba(11,18,59,0.4)" />
@@ -78,7 +87,7 @@ function Vehicle({ kind, color }: { kind: Lane["vehicle"]; color: string }) {
       );
     case "moto":
       return (
-        <g>
+        <g transform="rotate(90)">
           <rect x="-3" y="-12" width="6" height="24" rx="3" fill={color} />
           <circle cx="0" cy="-12" r="3.2" fill="rgba(11,18,59,0.7)" />
           <circle cx="0" cy="12" r="3.6" fill="rgba(11,18,59,0.7)" />
@@ -86,10 +95,10 @@ function Vehicle({ kind, color }: { kind: Lane["vehicle"]; color: string }) {
       );
     case "keke":
       return (
-        <g>
+        <g transform="rotate(90)">
           <path d="M -10 -8 L 10 -8 L 12 14 L -12 14 Z" fill={color} />
           <rect x="-7" y="-6" width="14" height="10" rx="1.5" fill="rgba(11,18,59,0.55)" />
-          <rect x="-9" y="-9" width="18" height="2" rx="1" fill="rgba(255,255,255,0.5)" />
+          <rect x="-9" y="-9" width="18" height="2" rx="1" fill="rgba(255,255,255,0.55)" />
         </g>
       );
   }
@@ -100,44 +109,60 @@ export function RoadIllustration() {
     <svg
       viewBox="0 0 880 440"
       preserveAspectRatio="xMidYMax slice"
-      className="w-full h-[240px] sm:h-[280px] md:h-[320px] opacity-90"
+      className="w-full h-[240px] sm:h-[280px] md:h-[320px]"
       aria-hidden
     >
-      {/* Roads */}
-      <g fill="none" strokeLinecap="round">
+      <defs>
+        {/* Fade roads into the surrounding gradient at top and bottom */}
+        <linearGradient id="roadFade" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="white" stopOpacity="0" />
+          <stop offset="22%" stopColor="white" stopOpacity="1" />
+          <stop offset="78%" stopColor="white" stopOpacity="1" />
+          <stop offset="100%" stopColor="white" stopOpacity="0" />
+        </linearGradient>
+        <mask id="roadMask">
+          <rect width="880" height="440" fill="url(#roadFade)" />
+        </mask>
+      </defs>
+
+      {/* Roads + cars all masked together so they fade into the gradient */}
+      <g mask="url(#roadMask)">
+        {/* Road bodies */}
+        <g fill="none" strokeLinecap="round">
+          {lanes.map((l, i) => (
+            <path
+              key={`road-${i}`}
+              d={l.path}
+              stroke="rgba(67,81,176,0.55)"
+              strokeWidth={l.width}
+            />
+          ))}
+          {/* Dashed centerlines */}
+          {lanes.map((l, i) => (
+            <path
+              key={`dash-${i}`}
+              d={l.path}
+              stroke="rgba(255,255,255,0.22)"
+              strokeWidth="1.5"
+              strokeDasharray="6 10"
+            />
+          ))}
+        </g>
+
+        {/* Vehicles, each riding its own road */}
         {lanes.map((l, i) => (
-          <path
-            key={`road-${i}`}
-            d={l.path}
-            stroke="rgba(67,81,176,0.55)"
-            strokeWidth={l.width}
-          />
-        ))}
-        {/* Dashed centerlines */}
-        {lanes.map((l, i) => (
-          <path
-            key={`dash-${i}`}
-            d={l.path}
-            stroke="rgba(255,255,255,0.18)"
-            strokeWidth="1.5"
-            strokeDasharray="6 10"
-          />
+          <g key={`car-${i}`}>
+            <Vehicle kind={l.vehicle} color={l.color} />
+            <animateMotion
+              dur={`${l.duration}s`}
+              begin={`${l.delay}s`}
+              repeatCount="indefinite"
+              rotate="auto"
+              path={l.path}
+            />
+          </g>
         ))}
       </g>
-
-      {/* Vehicles, each riding its own road */}
-      {lanes.map((l, i) => (
-        <g key={`car-${i}`}>
-          <Vehicle kind={l.vehicle} color={l.color} />
-          <animateMotion
-            dur={`${l.duration}s`}
-            begin={`${l.delay}s`}
-            repeatCount="indefinite"
-            rotate="auto"
-            path={l.path}
-          />
-        </g>
-      ))}
     </svg>
   );
 }

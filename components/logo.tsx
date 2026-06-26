@@ -8,14 +8,11 @@ export function LogoMark({ className }: { className?: string }) {
       className={cn("block", className)}
       aria-hidden="true"
     >
-      <path
-        d="M148 110 C148 105, 156 102, 161 105 L181 118 C187 121, 191 127, 192 134 L208 372 C209 386, 219 397, 233 398 C247 399, 258 389, 260 375 L274 232 C275 220, 285 211, 297 211 C309 211, 319 220, 320 232 L334 375 C336 389, 347 399, 361 398 C375 397, 385 386, 386 372 L402 154 C403 142, 413 132, 425 132 C432 132, 438 135, 443 140"
-        stroke="currentColor"
-        strokeWidth="34"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
+      <g fill="none" stroke="currentColor" strokeWidth="40" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M 140 110 L 175 88 L 175 90" />
+        <path d="M 175 130 L 175 412" />
+        <path d="M 175 412 C 175 372,195 232,220 232 C 245 232,260 280,270 360 L 280 412 C 280 372,300 232,325 232 C 350 232,365 280,375 360 L 385 412 C 385 372,405 232,432 232 C 457 232,472 280,475 412" />
+      </g>
     </svg>
   );
 }

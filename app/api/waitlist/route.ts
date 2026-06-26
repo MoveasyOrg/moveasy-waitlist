@@ -58,6 +58,7 @@ export async function POST(req: NextRequest) {
   const ua = req.headers.get("user-agent") ?? null;
   const referer = req.headers.get("referer") ?? null;
 
+  let duplicate = false;
   const sb = getSupabase();
   if (sb) {
     const { error } = await sb
@@ -68,7 +69,9 @@ export async function POST(req: NextRequest) {
       const isDupe =
         error.code === "23505" ||
         /duplicate/i.test(error.message ?? "");
-      if (!isDupe) {
+      if (isDupe) {
+        duplicate = true;
+      } else {
         return NextResponse.json(
           { ok: false, error: "Could not save your signup." },
           { status: 500 },
@@ -79,7 +82,7 @@ export async function POST(req: NextRequest) {
 
   const resendKey = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM_EMAIL;
-  if (resendKey && from) {
+  if (resendKey && from && !duplicate) {
     try {
       const resend = new Resend(resendKey);
       await resend.emails.send({
@@ -107,5 +110,9 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  return NextResponse.json({ ok: true, count: await currentCount() });
+  return NextResponse.json({
+    ok: true,
+    duplicate,
+    count: await currentCount(),
+  });
 }
