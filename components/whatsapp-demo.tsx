@@ -75,7 +75,7 @@ const thread: Bubble[] = [
 const fade = (delay = 0) => ({
   initial: { opacity: 0, y: 18 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-80px" },
+  viewport: { once: true, amount: 0.05 },
   transition: { delay, duration: 0.55, ease: [0.16, 1, 0.3, 1] as const },
 });
 
@@ -122,7 +122,7 @@ export function WhatsappDemo() {
                 key={i}
                 initial={{ opacity: 0, y: 8 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-40px" }}
+                viewport={{ once: true, amount: 0.05 }}
                 transition={{ delay: 0.05 * i, duration: 0.4 }}
                 className={
                   b.from === "user"

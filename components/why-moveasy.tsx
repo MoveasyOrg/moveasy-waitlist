@@ -59,7 +59,7 @@ export function WhyMoveasy() {
               key={c.title}
               initial={{ opacity: 0, y: 18 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
+              viewport={{ once: true, amount: 0.05 }}
               transition={{ delay: 0.08 * i, duration: 0.5 }}
               className="group rounded-3xl border border-navy/10 bg-white p-6 transition hover:border-navy/30"
             >
