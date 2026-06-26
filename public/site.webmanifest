@@ -1,0 +1,11 @@
+{
+  "name": "Moveasy",
+  "short_name": "Moveasy",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B123B",
+  "theme_color": "#0B123B",
+  "icons": [
+    { "src": "/brand/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

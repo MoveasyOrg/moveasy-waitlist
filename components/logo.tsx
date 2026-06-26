@@ -1,0 +1,21 @@
+import { cn } from "@/lib/utils";
+
+export function LogoMark({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 512 512"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn("block", className)}
+      aria-hidden="true"
+    >
+      <path
+        d="M148 110 C148 105, 156 102, 161 105 L181 118 C187 121, 191 127, 192 134 L208 372 C209 386, 219 397, 233 398 C247 399, 258 389, 260 375 L274 232 C275 220, 285 211, 297 211 C309 211, 319 220, 320 232 L334 375 C336 389, 347 399, 361 398 C375 397, 385 386, 386 372 L402 154 C403 142, 413 132, 425 132 C432 132, 438 135, 443 140"
+        stroke="currentColor"
+        strokeWidth="34"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+    </svg>
+  );
+}
