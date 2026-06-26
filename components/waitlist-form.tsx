@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import LiquidGlass from "@nkzw/liquid-glass";
 import { Counter } from "./counter";
 
 type Status = "idle" | "loading" | "success" | "error";
@@ -41,31 +42,42 @@ export function WaitlistForm({ initialCount }: { initialCount: number }) {
 
   return (
     <div className="w-full">
-      <form
-        onSubmit={onSubmit}
-        className="glass shadow-glass mx-auto flex w-full max-w-md items-center gap-1 rounded-full p-1.5"
-      >
-        <input
-          type="email"
-          required
-          inputMode="email"
-          autoComplete="email"
-          placeholder="Enter your email address"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          aria-label="Email address"
-          className="h-11 flex-1 rounded-full bg-transparent px-5 text-sm text-white placeholder:text-white/60 focus:outline-none"
-        />
-        <button
-          type="submit"
-          disabled={status === "loading"}
-          className="h-11 rounded-full bg-white px-5 text-sm font-medium text-navy transition hover:bg-accent hover:text-ink disabled:opacity-60"
+      <div className="mx-auto flex w-full max-w-md justify-center">
+        <LiquidGlass
+          borderRadius={100}
+          padding="6px"
+          blurAmount={0.1}
+          displacementScale={36}
+          elasticity={0.22}
+          saturation={130}
         >
-          {status === "loading" ? "Joining..." : "Join Waitlist"}
-        </button>
-      </form>
+          <form
+            onSubmit={onSubmit}
+            className="flex w-[min(28rem,calc(100vw-3rem))] items-center gap-1"
+          >
+            <input
+              type="email"
+              required
+              inputMode="email"
+              autoComplete="email"
+              placeholder="Enter your email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              aria-label="Email address"
+              className="h-11 flex-1 min-w-0 rounded-full bg-transparent px-5 text-sm text-white placeholder:text-white/60 focus:outline-none"
+            />
+            <button
+              type="submit"
+              disabled={status === "loading"}
+              className="h-11 shrink-0 rounded-full bg-white px-4 text-sm font-medium text-navy transition hover:bg-accent hover:text-ink disabled:opacity-60"
+            >
+              {status === "loading" ? "Joining..." : "Join Waitlist"}
+            </button>
+          </form>
+        </LiquidGlass>
+      </div>
 
-      <div className="mt-4 flex flex-col items-center gap-1 text-center">
+      <div className="relative mt-8 flex flex-col items-center gap-1 text-center">
         <p className="text-sm text-white/70">
           <Counter target={count} /> people already joined
         </p>

@@ -27,8 +27,8 @@ const config: Config = {
         whatsapp: "#25D366",
       },
       fontFamily: {
-        sans: ["var(--font-geist)", "Inter", "system-ui", "sans-serif"],
-        display: ["var(--font-display)", "Georgia", "serif"],
+        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        display: ["var(--font-sans)", "system-ui", "sans-serif"],
       },
       backgroundImage: {
         "hero-radial":

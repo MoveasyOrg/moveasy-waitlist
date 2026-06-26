@@ -1,18 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Instrument_Serif } from "next/font/google";
+import { DM_Sans } from "next/font/google";
 import "./globals.css";
 
-const sans = Inter({
+const sans = DM_Sans({
   subsets: ["latin"],
-  variable: "--font-geist",
+  variable: "--font-sans",
   display: "swap",
-});
-
-const display = Instrument_Serif({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-display",
-  display: "swap",
+  axes: ["opsz"],
 });
 
 const SITE_URL =
@@ -96,7 +90,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className={`${sans.variable} ${display.variable}`}>
+    <html lang="en" className={sans.variable}>
       <body className="font-sans antialiased">
         {children}
         <script

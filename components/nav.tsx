@@ -1,25 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
+import LiquidGlass from "@nkzw/liquid-glass";
 import { LogoMark } from "./logo";
 
-function IconBell() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-      <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-    </svg>
-  );
-}
-
-function IconGear() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="3" />
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-    </svg>
-  );
-}
+const links: { label: string; href: string }[] = [
+  { label: "About", href: "#about" },
+  { label: "FAQs", href: "#faqs" },
+];
 
 export function Nav() {
   return (
@@ -30,32 +18,48 @@ export function Nav() {
       className="fixed top-3 left-0 right-0 z-50 px-4 sm:top-5"
     >
       <nav className="mx-auto flex max-w-6xl items-center justify-between">
-        <div className="glass flex items-center gap-1 rounded-full px-1.5 py-1.5 shadow-glass">
-          <button
-            aria-label="Notifications"
-            className="grid h-9 w-9 place-items-center rounded-full text-white/80 hover:bg-white/10 hover:text-white transition"
-          >
-            <IconGear />
-          </button>
-          <button
-            aria-label="Settings"
-            className="grid h-9 w-9 place-items-center rounded-full text-white/80 hover:bg-white/10 hover:text-white transition"
-          >
-            <IconBell />
-          </button>
-        </div>
-
-        <a
-          href="/"
-          className="glass flex items-center gap-2 rounded-full pl-1.5 pr-4 py-1.5 shadow-glass"
+        <LiquidGlass
+          borderRadius={100}
+          padding="4px 14px 4px 4px"
+          blurAmount={0.1}
+          displacementScale={24}
+          elasticity={0.18}
+          saturation={130}
         >
-          <span className="grid h-9 w-9 place-items-center rounded-full bg-white text-navy">
-            <LogoMark className="h-5 w-5" />
-          </span>
-          <span className="font-display text-lg leading-none text-white">
-            Moveasy
-          </span>
-        </a>
+          <a
+            href="/"
+            aria-label="Moveasy home"
+            className="flex items-center gap-2"
+          >
+            <span className="grid h-8 w-8 place-items-center rounded-full bg-white text-navy">
+              <LogoMark className="h-4 w-4" />
+            </span>
+            <span className="text-sm font-semibold tracking-tight text-white sm:text-base">
+              Moveasy
+            </span>
+          </a>
+        </LiquidGlass>
+
+        <LiquidGlass
+          borderRadius={100}
+          padding="4px"
+          blurAmount={0.1}
+          displacementScale={24}
+          elasticity={0.18}
+          saturation={130}
+        >
+          <div className="flex items-center gap-0.5">
+            {links.map((l) => (
+              <a
+                key={l.href}
+                href={l.href}
+                className="rounded-full px-3 h-8 text-xs font-medium text-white/85 grid place-items-center hover:bg-white/10 hover:text-white transition sm:px-4 sm:h-9 sm:text-sm"
+              >
+                {l.label}
+              </a>
+            ))}
+          </div>
+        </LiquidGlass>
       </nav>
     </motion.header>
   );
