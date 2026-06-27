@@ -5,11 +5,31 @@ import { useEffect } from "react";
 
 export type ToastTone = "success" | "error";
 
+const ICONS: Record<ToastTone, React.ReactNode> = {
+  success: (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 6 9 17l-5-5" />
+    </svg>
+  ),
+  error: (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 8v5" />
+      <path d="M12 16h.01" />
+    </svg>
+  ),
+};
+
+const TITLES: Record<ToastTone, string> = {
+  success: "You're in.",
+  error: "Couldn't sign you up.",
+};
+
 export function Toast({
   message,
   tone,
   onDismiss,
-  duration = 5000,
+  duration = 4500,
 }: {
   message: string | null;
   tone: ToastTone;
@@ -22,43 +42,74 @@ export function Toast({
     return () => clearTimeout(id);
   }, [message, duration, onDismiss]);
 
+  useEffect(() => {
+    if (!message) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onDismiss();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [message, onDismiss]);
+
+  const ring =
+    tone === "success"
+      ? "shadow-[0_0_0_1px_rgba(74,222,128,0.35),0_30px_80px_-12px_rgba(20,160,75,0.45)]"
+      : "shadow-[0_0_0_1px_rgba(248,113,113,0.35),0_30px_80px_-12px_rgba(178,49,49,0.45)]";
+
+  const accent =
+    tone === "success"
+      ? "bg-emerald-500/20 text-emerald-200"
+      : "bg-rose-500/20 text-rose-200";
+
   return (
     <AnimatePresence>
       {message && (
         <motion.div
-          key={message + tone}
-          initial={{ opacity: 0, y: -16, scale: 0.98 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -10, scale: 0.98 }}
-          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-          role={tone === "error" ? "alert" : "status"}
-          className="fixed top-5 left-1/2 z-[60] -translate-x-1/2 px-4 sm:top-6"
+          key="toast-root"
+          role={tone === "error" ? "alertdialog" : "dialog"}
+          aria-live={tone === "error" ? "assertive" : "polite"}
+          aria-modal="true"
+          aria-labelledby="toast-title"
+          aria-describedby="toast-body"
+          className="fixed inset-0 z-[60] flex items-center justify-center px-5"
         >
-          <div
-            className="flex items-center gap-3 rounded-full px-5 py-3 text-sm font-medium text-white shadow-[0_18px_50px_-12px_rgba(6,9,32,0.7)] backdrop-blur-xl backdrop-saturate-150"
-            style={{
-              background:
-                tone === "success"
-                  ? "linear-gradient(135deg, rgba(37,211,102,0.92), rgba(20,160,75,0.92))"
-                  : "linear-gradient(135deg, rgba(217,79,79,0.92), rgba(178,49,49,0.92))",
-              border: "1px solid rgba(255,255,255,0.18)",
-            }}
+          <motion.button
+            type="button"
+            aria-label="Dismiss"
+            onClick={onDismiss}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="absolute inset-0 cursor-default bg-navy-900/55 backdrop-blur-xl"
+          />
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.94, y: 8 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.96, y: 4 }}
+            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            className={`relative w-full max-w-sm overflow-hidden rounded-3xl border border-white/12 bg-navy-900/85 p-7 text-center text-white backdrop-blur-2xl ${ring}`}
           >
-            <span aria-hidden className="grid h-5 w-5 place-items-center">
-              {tone === "success" ? (
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20 6 9 17l-5-5" />
-                </svg>
-              ) : (
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 9v4" />
-                  <path d="M12 17h.01" />
-                  <circle cx="12" cy="12" r="10" />
-                </svg>
-              )}
-            </span>
-            <span>{message}</span>
-          </div>
+            <div
+              className={`mx-auto grid h-14 w-14 place-items-center rounded-full ${accent}`}
+            >
+              {ICONS[tone]}
+            </div>
+            <h3 id="toast-title" className="mt-5 text-xl font-semibold tracking-tight">
+              {TITLES[tone]}
+            </h3>
+            <p id="toast-body" className="mt-2 text-pretty text-sm leading-relaxed text-white/70">
+              {message}
+            </p>
+            <button
+              type="button"
+              onClick={onDismiss}
+              className="mt-6 inline-flex h-10 items-center justify-center rounded-full bg-white px-6 text-sm font-medium text-navy transition hover:bg-accent hover:text-ink"
+            >
+              {tone === "success" ? "Sweet" : "Got it"}
+            </button>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>

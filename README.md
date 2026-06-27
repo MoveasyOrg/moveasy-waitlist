@@ -32,8 +32,19 @@ Open http://localhost:3000.
 | `NEXT_PUBLIC_LAUNCH_AT` | yes | ISO timestamp the countdown reads from |
 | `SUPABASE_URL` | yes (prod) | Project URL |
 | `SUPABASE_SERVICE_ROLE_KEY` | yes (prod) | Server-only key for inserts |
-| `RESEND_API_KEY` | optional | Skip if you want signups without confirmation email |
+| `RESEND_API_KEY` | optional | Resend API key (`re_...`). Skip and signups still work, they just don't get a welcome email |
 | `RESEND_FROM_EMAIL` | optional | Verified sender, e.g. `Moveasy <hello@moveasy.africa>` |
+
+### Resend setup
+
+The welcome email is sent via [Resend](https://resend.com) when a signup lands. To enable it:
+
+1. Create an account at [resend.com](https://resend.com) and grab an API key from [resend.com/api-keys](https://resend.com/api-keys) — the format is `re_...`.
+2. Add and verify your sending domain at [resend.com/domains](https://resend.com/domains). DNS records (SPF, DKIM) need to be set on `moveasy.africa`. Until the domain is verified, Resend can only deliver to the address you signed up with — useful for testing.
+3. Set `RESEND_FROM_EMAIL` to a sender on the verified domain, e.g. `Moveasy <hello@moveasy.africa>`.
+4. Set `RESEND_API_KEY` to the key from step 1.
+
+The email template lives at [`lib/emails.ts`](lib/emails.ts) and is on-brand DM Sans + navy/accent. If Resend rejects the send (unverified domain, rate limit, bad key) the API logs the error to the server console and the signup still succeeds.
 
 If Supabase is not configured, the API still validates and accepts signups but does not persist them. Useful for local dev.
 

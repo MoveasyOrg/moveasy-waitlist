@@ -3,6 +3,7 @@ import { Resend } from "resend";
 import { getSupabase, hasServiceRole } from "@/lib/supabase";
 import { rateLimit } from "@/lib/rate-limit";
 import { isValidEmail, normalizeEmail } from "@/lib/utils";
+import { welcomeEmailHtml, welcomeEmailText } from "@/lib/emails";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -85,28 +86,18 @@ export async function POST(req: NextRequest) {
   if (resendKey && from && !duplicate) {
     try {
       const resend = new Resend(resendKey);
-      await resend.emails.send({
+      const result = await resend.emails.send({
         from,
         to: email,
         subject: "You're on the Moveasy waitlist",
-        html: `
-          <div style="font-family:Inter,system-ui,sans-serif;color:#0B123B;max-width:480px;margin:auto;padding:24px">
-            <h1 style="font-size:20px;margin:0 0 12px">Welcome to Moveasy.</h1>
-            <p style="font-size:15px;line-height:1.5;color:#3a4063;margin:0 0 16px">
-              You're on the list for the WhatsApp-native way to move around Nigeria.
-              We start in Awka, then roll across the country.
-            </p>
-            <p style="font-size:15px;line-height:1.5;color:#3a4063;margin:0 0 16px">
-              When we open up your city, you'll be the first to know.
-            </p>
-            <p style="font-size:13px;color:#7a7f9c;margin-top:24px">
-              Born in Akwa. Built for Africa.
-            </p>
-          </div>
-        `,
+        html: welcomeEmailHtml(),
+        text: welcomeEmailText(),
       });
-    } catch {
-      // Confirmation email is best-effort. Signup still counts.
+      if (result.error) {
+        console.error("[waitlist] resend send error", result.error);
+      }
+    } catch (err) {
+      console.error("[waitlist] resend threw", err);
     }
   }
 
