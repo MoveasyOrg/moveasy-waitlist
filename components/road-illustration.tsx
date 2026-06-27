@@ -2,70 +2,68 @@
 
 /**
  * Top-down view of wavy roads with vehicles cruising along them.
- * Pure inline SVG so it stays under a few kilobytes.
- * Cars follow each road via <animateMotion>. Roads fade into the
- * surrounding navy gradient at the top and bottom.
+ * Each road carries a few vehicles offset by keyPoints so the scene
+ * looks populated and is already in motion on first paint.
  */
 
+type Vehicle = "sedan" | "suv" | "moto" | "keke";
+
 type Lane = {
-  /** SVG path for the road centerline. Starts above viewport, ends below. */
+  /** SVG path for the road centerline (top to bottom of canvas). */
   path: string;
-  /** Pixel width of the painted road */
+  /** Painted road width in svg units. */
   width: number;
-  /** Animation duration in seconds (one full lap) */
+  /** Animation duration in seconds (one full lap). */
   duration: number;
-  /** Delay before the first lap */
-  delay: number;
-  /** Vehicle to render */
-  vehicle: "sedan" | "suv" | "moto" | "keke";
-  /** Vehicle accent color */
-  color: string;
+  /** Vehicles riding this road. Each "start" is a 0..1 position along the path. */
+  vehicles: { kind: Vehicle; color: string; start: number }[];
 };
 
 const lanes: Lane[] = [
   {
     path: "M 80 -40 C 110 60, 50 140, 90 220, 130 300, 60 360, 100 460",
     width: 56,
-    duration: 22,
-    delay: 0,
-    vehicle: "sedan",
-    color: "#F2A93B",
+    duration: 26,
+    vehicles: [
+      { kind: "sedan", color: "#F2A93B", start: 0.05 },
+      { kind: "moto", color: "#67E8F9", start: 0.55 },
+    ],
   },
   {
     path: "M 320 -40 C 280 60, 360 130, 300 220, 240 310, 350 380, 310 460",
     width: 56,
-    duration: 26,
-    delay: 4,
-    vehicle: "suv",
-    color: "#FFFFFF",
+    duration: 30,
+    vehicles: [
+      { kind: "suv", color: "#FFFFFF", start: 0.2 },
+      { kind: "sedan", color: "#7FB069", start: 0.7 },
+    ],
   },
   {
     path: "M 560 -40 C 600 70, 520 150, 580 240, 640 330, 540 390, 580 460",
     width: 46,
-    duration: 18,
-    delay: 2,
-    vehicle: "moto",
-    color: "#67E8F9",
+    duration: 22,
+    vehicles: [
+      { kind: "moto", color: "#F2A93B", start: 0.1 },
+      { kind: "keke", color: "#FFCB6E", start: 0.6 },
+    ],
   },
   {
     path: "M 800 -40 C 770 60, 830 140, 780 240, 730 340, 820 400, 790 460",
     width: 56,
-    duration: 28,
-    delay: 7,
-    vehicle: "keke",
-    color: "#FFCB6E",
+    duration: 32,
+    vehicles: [
+      { kind: "keke", color: "#FFCB6E", start: 0.0 },
+      { kind: "sedan", color: "#FFFFFF", start: 0.45 },
+    ],
   },
 ];
 
 /**
- * Vehicles are drawn pointing along +Y (the direction of travel down the road)
- * so animateMotion's rotate="auto" (which rotates the local X axis to the
- * tangent) leaves them oriented correctly when paths run vertically.
- *
- * Length axis = Y (taller than wide), front of vehicle at y = -length/2,
- * tail at y = +length/2.
+ * Vehicles are drawn pointing along +Y (length along Y axis).
+ * The local g element pre-rotates by 90° so the long axis aligns with +X,
+ * which is the axis animateMotion's rotate="auto" snaps to the path tangent.
  */
-function Vehicle({ kind, color }: { kind: Lane["vehicle"]; color: string }) {
+function Vehicle({ kind, color }: { kind: Vehicle; color: string }) {
   switch (kind) {
     case "sedan":
       return (
@@ -109,14 +107,14 @@ export function RoadIllustration() {
     <svg
       viewBox="0 0 880 440"
       preserveAspectRatio="xMidYMax slice"
-      className="w-full h-[240px] sm:h-[280px] md:h-[320px]"
+      className="block w-full h-[260px] sm:h-[300px] md:h-[340px]"
       aria-hidden
     >
       <defs>
-        {/* Fade roads into the surrounding gradient at top and bottom */}
+        {/* Roads bleed into the navy gradient at both ends */}
         <linearGradient id="roadFade" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="white" stopOpacity="0" />
-          <stop offset="22%" stopColor="white" stopOpacity="1" />
+          <stop offset="32%" stopColor="white" stopOpacity="1" />
           <stop offset="78%" stopColor="white" stopOpacity="1" />
           <stop offset="100%" stopColor="white" stopOpacity="0" />
         </linearGradient>
@@ -125,7 +123,6 @@ export function RoadIllustration() {
         </mask>
       </defs>
 
-      {/* Roads + cars all masked together so they fade into the gradient */}
       <g mask="url(#roadMask)">
         {/* Road bodies */}
         <g fill="none" strokeLinecap="round">
@@ -137,7 +134,6 @@ export function RoadIllustration() {
               strokeWidth={l.width}
             />
           ))}
-          {/* Dashed centerlines */}
           {lanes.map((l, i) => (
             <path
               key={`dash-${i}`}
@@ -149,19 +145,28 @@ export function RoadIllustration() {
           ))}
         </g>
 
-        {/* Vehicles, each riding its own road */}
-        {lanes.map((l, i) => (
-          <g key={`car-${i}`}>
-            <Vehicle kind={l.vehicle} color={l.color} />
-            <animateMotion
-              dur={`${l.duration}s`}
-              begin={`${l.delay}s`}
-              repeatCount="indefinite"
-              rotate="auto"
-              path={l.path}
-            />
-          </g>
-        ))}
+        {/* Vehicles — multiple per lane, all moving from t=0 thanks to keyPoints */}
+        {lanes.flatMap((lane, laneIdx) =>
+          lane.vehicles.map((v, vIdx) => {
+            // We loop the whole 0→1 path but start at `v.start` by feeding
+            // keyTimes/keyPoints that advance from start → 1 → 0 → start.
+            const s = v.start.toFixed(3);
+            return (
+              <g key={`v-${laneIdx}-${vIdx}`}>
+                <Vehicle kind={v.kind} color={v.color} />
+                <animateMotion
+                  dur={`${lane.duration}s`}
+                  repeatCount="indefinite"
+                  rotate="auto"
+                  path={lane.path}
+                  keyTimes={`0; ${(1 - v.start).toFixed(3)}; ${(1 - v.start).toFixed(3)}; 1`}
+                  keyPoints={`${s}; 1; 0; ${s}`}
+                  calcMode="linear"
+                />
+              </g>
+            );
+          }),
+        )}
       </g>
     </svg>
   );

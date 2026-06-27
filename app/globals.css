@@ -37,6 +37,12 @@ body {
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
+  .glass-sheet {
+    background: rgba(11, 18, 59, 0.78);
+    backdrop-filter: blur(28px) saturate(140%);
+    -webkit-backdrop-filter: blur(28px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
   .text-balance {
     text-wrap: balance;
   }
@@ -86,4 +92,47 @@ body {
   border-radius: 9999px;
   border: 1.5px solid rgba(255, 255, 255, 0.7);
   background: transparent;
+}
+
+/* Info page typography */
+.prose-moveasy {
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.65;
+}
+.prose-moveasy h2 {
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+}
+.prose-moveasy h3 {
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+.prose-moveasy p {
+  margin: 0 0 1rem;
+}
+.prose-moveasy ul {
+  margin: 0 0 1rem;
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+.prose-moveasy li {
+  margin: 0.25rem 0;
+}
+.prose-moveasy a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.prose-moveasy strong { color: #ffffff; }
+.prose-moveasy hr {
+  margin: 2rem 0;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
