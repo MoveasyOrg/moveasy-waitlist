@@ -34,6 +34,15 @@ function Burger({ open }: { open: boolean }) {
 
 export function Nav() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  // Track scroll position to fade in the glass background
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   // Lock scroll when the sheet is open
   useEffect(() => {
@@ -61,9 +70,13 @@ export function Nav() {
         initial={{ y: -16, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="absolute top-0 left-0 right-0 z-50 px-5 pt-5 sm:px-8 sm:pt-7"
+        className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,backdrop-filter,border-color,padding] duration-300 ${
+          scrolled
+            ? "bg-navy-900/70 backdrop-blur-xl border-b border-white/8 py-3"
+            : "py-5 sm:py-7"
+        }`}
       >
-        <nav className="mx-auto flex max-w-6xl items-center justify-between">
+        <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 sm:px-8">
           <Link
             href="/"
             aria-label="Moveasy home"

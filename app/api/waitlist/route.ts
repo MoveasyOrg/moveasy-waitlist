@@ -5,6 +5,7 @@ import { rateLimit } from "@/lib/rate-limit";
 import {
   firstName,
   isValidEmail,
+  normalizeCity,
   normalizeEmail,
   normalizeName,
 } from "@/lib/utils";
@@ -42,7 +43,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  let body: { email?: unknown; name?: unknown } = {};
+  let body: { email?: unknown; name?: unknown; city?: unknown } = {};
   try {
     body = await req.json();
   } catch {
@@ -62,6 +63,8 @@ export async function POST(req: NextRequest) {
   const email = normalizeEmail(body.email);
   const rawName = typeof body.name === "string" ? body.name : "";
   const name = normalizeName(rawName) || null;
+  const rawCity = typeof body.city === "string" ? body.city : "";
+  const city = normalizeCity(rawCity) || null;
   const ua = req.headers.get("user-agent") ?? null;
   const referer = req.headers.get("referer") ?? null;
 
@@ -72,7 +75,7 @@ export async function POST(req: NextRequest) {
   if (sb) {
     const { error } = await sb
       .from("waitlist")
-      .insert({ email, name, ip_hash: key, user_agent: ua, referer });
+      .insert({ email, name, city, ip_hash: key, user_agent: ua, referer });
 
     if (error) {
       const isDupe =

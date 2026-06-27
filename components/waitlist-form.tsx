@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Toast, type ToastTone } from "./toast";
+import { NIGERIAN_CITIES } from "@/lib/cities";
 
 type Status = "idle" | "loading" | "success" | "duplicate" | "error";
 
@@ -24,8 +25,28 @@ function Spinner() {
   );
 }
 
+function ChevronDown() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-white/55"
+      aria-hidden
+    >
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  );
+}
+
 export function WaitlistForm() {
   const [name, setName] = useState("");
+  const [city, setCity] = useState("");
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [toast, setToast] = useState<{ message: string; tone: ToastTone; name?: string | null } | null>(null);
@@ -38,7 +59,7 @@ export function WaitlistForm() {
       const res = await fetch("/api/waitlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email }),
+        body: JSON.stringify({ name, email, city }),
       });
       const data = (await res.json()) as {
         ok: boolean;
@@ -69,6 +90,7 @@ export function WaitlistForm() {
           name: data.firstName ?? null,
         });
         setName("");
+        setCity("");
         setEmail("");
       }
     } catch {
@@ -77,55 +99,79 @@ export function WaitlistForm() {
     }
   }
 
+  const inputClass =
+    "h-12 w-full rounded-2xl bg-white/5 px-5 text-base text-white placeholder:text-white/55 border border-white/10 focus:border-white/30 focus:bg-white/8 focus:outline-none focus:ring-2 focus:ring-white/15 transition disabled:opacity-60";
+
   return (
     <>
       <form
         onSubmit={onSubmit}
-        className="glass shadow-glass mx-auto flex w-full max-w-lg flex-col gap-2 rounded-[28px] p-2 sm:flex-row sm:items-center sm:gap-0 sm:rounded-full"
+        className="glass shadow-glass mx-auto w-full max-w-lg space-y-3 rounded-3xl p-4 sm:p-5"
       >
-        <input
-          type="text"
-          autoComplete="given-name"
-          placeholder="First name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          aria-label="First name"
-          maxLength={60}
-          disabled={status === "loading"}
-          className="h-12 rounded-full bg-transparent px-5 text-base text-white placeholder:text-white/55 focus:outline-none disabled:opacity-60 sm:w-44 sm:shrink-0 sm:rounded-l-full sm:rounded-r-none"
-        />
-        {/* Visible separator on every viewport — horizontal on mobile, vertical on desktop */}
-        <span
-          aria-hidden
-          className="mx-3 block h-px w-auto self-stretch bg-white/25 sm:mx-0 sm:h-6 sm:w-px sm:bg-white/15"
-        />
-        <input
-          type="email"
-          required
-          inputMode="email"
-          autoComplete="email"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          aria-label="Email address"
-          disabled={status === "loading"}
-          className="h-12 flex-1 min-w-0 rounded-full bg-transparent px-5 text-base text-white placeholder:text-white/55 focus:outline-none disabled:opacity-60 sm:rounded-none sm:px-4"
-        />
-        <button
-          type="submit"
-          disabled={status === "loading"}
-          className="grid h-12 shrink-0 grid-flow-col items-center gap-2 rounded-full bg-white px-6 text-sm font-medium text-navy transition hover:bg-accent hover:text-ink disabled:cursor-not-allowed disabled:bg-white/85 sm:ml-1"
-          aria-busy={status === "loading"}
-        >
-          {status === "loading" ? (
-            <>
-              <Spinner />
-              <span>Joining</span>
-            </>
-          ) : (
-            <span>Join Waitlist</span>
-          )}
-        </button>
+        {/* Row 1: Name + City */}
+        <div className="grid gap-3 sm:grid-cols-2">
+          <input
+            type="text"
+            autoComplete="given-name"
+            placeholder="First name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            aria-label="First name"
+            maxLength={60}
+            disabled={status === "loading"}
+            className={inputClass}
+          />
+          <div className="relative">
+            <select
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              aria-label="City"
+              disabled={status === "loading"}
+              className={`${inputClass} appearance-none pr-10 ${city ? "text-white" : "text-white/55"}`}
+            >
+              <option value="" className="bg-navy-900 text-white/55">
+                Your city
+              </option>
+              {NIGERIAN_CITIES.map((c) => (
+                <option key={c} value={c} className="bg-navy-900 text-white">
+                  {c}
+                </option>
+              ))}
+            </select>
+            <ChevronDown />
+          </div>
+        </div>
+
+        {/* Row 2: Email + Join */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <input
+            type="email"
+            required
+            inputMode="email"
+            autoComplete="email"
+            placeholder="Enter your email address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            aria-label="Email address"
+            disabled={status === "loading"}
+            className={`${inputClass} sm:flex-1`}
+          />
+          <button
+            type="submit"
+            disabled={status === "loading"}
+            className="grid h-12 shrink-0 grid-flow-col items-center justify-center gap-2 rounded-2xl bg-white px-6 text-sm font-medium text-navy transition hover:bg-accent hover:text-ink disabled:cursor-not-allowed disabled:bg-white/85"
+            aria-busy={status === "loading"}
+          >
+            {status === "loading" ? (
+              <>
+                <Spinner />
+                <span>Joining</span>
+              </>
+            ) : (
+              <span>Join Waitlist</span>
+            )}
+          </button>
+        </div>
       </form>
 
       <Toast

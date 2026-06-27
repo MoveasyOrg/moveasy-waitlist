@@ -156,9 +156,8 @@ export function FeatureMockup({
         <div className={side === "right" ? "lg:order-2" : "lg:order-1"}>
           <div className="relative mx-auto w-full max-w-[300px] sm:max-w-[320px]">
             {/* Phone frame */}
-            <div className="relative aspect-[9/19.5] rounded-[36px] border border-white/10 bg-navy-900 p-2.5 shadow-[0_24px_60px_-20px_rgba(6,9,32,0.55)]">
-              <div className="absolute left-1/2 top-2.5 z-10 h-5 w-24 -translate-x-1/2 rounded-full bg-black" />
-              <div className="relative h-full w-full overflow-hidden rounded-[28px] bg-navy">
+            <div className="relative aspect-[9/19.5] rounded-[36px] border border-white/10 bg-navy-900 p-1.5 shadow-[0_24px_60px_-20px_rgba(6,9,32,0.55)]">
+              <div className="relative h-full w-full overflow-hidden rounded-[30px] bg-navy">
                 {mockupSrc ? (
                   <Image
                     src={mockupSrc}
@@ -171,6 +170,11 @@ export function FeatureMockup({
                   mockupPlaceholder
                 )}
               </div>
+              {/* Dynamic Island — sits inside the screen safe-area, above the status bar */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute left-1/2 top-[6px] z-20 h-[22px] w-[88px] -translate-x-1/2 rounded-full bg-black shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04)]"
+              />
             </div>
 
             {/* Floating decorations */}

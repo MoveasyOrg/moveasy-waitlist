@@ -1,48 +1,38 @@
 "use client";
 
 import { FeatureMockup } from "./feature-mockup";
+import { WhatsappChat } from "./whatsapp-chat";
 
 function VoiceChatPlaceholder() {
   return (
-    <div className="flex h-full w-full flex-col bg-[#0a1a2e]">
-      {/* WhatsApp-style header */}
-      <div className="flex items-center gap-3 bg-[#0b2435] px-4 pb-3 pt-10 text-white">
-        <span className="grid h-9 w-9 place-items-center rounded-full bg-whatsapp text-[13px] font-bold">
-          M
-        </span>
-        <div className="leading-tight">
-          <p className="text-sm font-semibold">Moveasy</p>
-          <p className="text-[10px] text-white/55">online</p>
-        </div>
-      </div>
-      {/* Bubbles */}
-      <ul className="flex-1 space-y-2 overflow-hidden bg-[#0a1a2e] bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.05),transparent_60%)] px-3 py-4">
-        <li className="flex justify-end">
-          <div className="rounded-tr-md rounded-2xl bg-[#005c4b] px-3 py-2 text-[11px] text-white shadow-sm">
-            <p className="text-[9px] uppercase tracking-wider text-white/45">
-              Voice note
-            </p>
-            <p className="mt-0.5">🎙 0:08</p>
-          </div>
-        </li>
-        <li className="flex justify-start">
-          <div className="max-w-[80%] rounded-tl-md rounded-2xl bg-[#1f2c33] px-3 py-2 text-[11px] leading-snug text-white/90 shadow-sm">
-            Got you. Pickup Aroma Junction → drop UNIZIK gate. Comfort sedan,
-            ₦1,400, ETA 4 min. Reply 1 to confirm.
-          </div>
-        </li>
-        <li className="flex justify-end">
-          <div className="rounded-tr-md rounded-2xl bg-[#005c4b] px-3 py-2 text-[11px] text-white shadow-sm">
-            1
-          </div>
-        </li>
-        <li className="flex justify-start">
-          <div className="max-w-[80%] rounded-tl-md rounded-2xl bg-[#1f2c33] px-3 py-2 text-[11px] leading-snug text-white/90 shadow-sm">
-            Confirmed ✅ Emeka in a silver Corolla, plate AKD-237-FG.
-          </div>
-        </li>
-      </ul>
-    </div>
+    <WhatsappChat
+      bubbles={[
+        { kind: "voice", side: "out", length: "0:08", time: "07:42" },
+        {
+          kind: "text",
+          side: "in",
+          text: (
+            <>
+              Got you. Pickup <b>Aroma Junction</b> → drop <b>UNIZIK gate</b>.
+              Comfort sedan, ₦1,400, ETA 4 min. Reply 1 to confirm.
+            </>
+          ),
+          time: "07:42",
+        },
+        { kind: "text", side: "out", text: "1", time: "07:43" },
+        {
+          kind: "text",
+          side: "in",
+          text: (
+            <>
+              Confirmed ✅ Emeka in a silver Corolla, plate{" "}
+              <b>AKD-237-FG</b>.
+            </>
+          ),
+          time: "07:43",
+        },
+      ]}
+    />
   );
 }
 

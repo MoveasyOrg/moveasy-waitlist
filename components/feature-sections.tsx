@@ -1,54 +1,7 @@
 "use client";
 
 import { FeatureMockup } from "./feature-mockup";
-
-function ChatPlaceholder({
-  title,
-  bubbles,
-}: {
-  title: string;
-  bubbles: { side: "in" | "out"; text: string; meta?: string }[];
-}) {
-  return (
-    <div className="flex h-full w-full flex-col bg-[#0a1a2e]">
-      {/* WhatsApp-style header */}
-      <div className="flex items-center gap-3 bg-[#0b2435] px-4 pb-3 pt-12 text-white">
-        <span className="grid h-9 w-9 place-items-center rounded-full bg-whatsapp text-[13px] font-bold">
-          M
-        </span>
-        <div className="leading-tight">
-          <p className="text-sm font-semibold">{title}</p>
-          <p className="text-[10px] text-white/55">online</p>
-        </div>
-      </div>
-      {/* Bubbles */}
-      <ul className="flex-1 space-y-2 overflow-hidden bg-[#0a1a2e] bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.05),transparent_60%)] px-3 py-4">
-        {bubbles.map((b, i) => (
-          <li
-            key={i}
-            className={b.side === "out" ? "flex justify-end" : "flex justify-start"}
-          >
-            <div
-              className={
-                "max-w-[80%] rounded-2xl px-3 py-2 text-[11px] leading-snug shadow-sm " +
-                (b.side === "out"
-                  ? "rounded-tr-md bg-[#005c4b] text-white"
-                  : "rounded-tl-md bg-[#1f2c33] text-white/90")
-              }
-            >
-              {b.meta && (
-                <p className="mb-1 text-[9px] uppercase tracking-wider text-white/40">
-                  {b.meta}
-                </p>
-              )}
-              <p>{b.text}</p>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
+import { WhatsappChat } from "./whatsapp-chat";
 
 export function PhotoBookingFeature() {
   return (
@@ -67,13 +20,27 @@ export function PhotoBookingFeature() {
       side="left"
       mockupAlt="Moveasy photo destination on WhatsApp"
       mockupPlaceholder={
-        <ChatPlaceholder
-          title="Moveasy"
+        <WhatsappChat
           bubbles={[
-            { side: "out", meta: "Photo", text: "📷 storefront.jpg" },
-            { side: "in", text: "That's Shoprite Awka on Zik Avenue. Want me to book it?" },
-            { side: "out", text: "Yes" },
-            { side: "in", text: "Booking now. Comfort sedan, ₦1,650, ETA 6 min." },
+            { kind: "image", side: "out", caption: "Heading here", time: "14:02" },
+            {
+              kind: "text",
+              side: "in",
+              text: (
+                <>
+                  That&rsquo;s <b>Shoprite Awka</b> on Zik Avenue. Want me to
+                  book it?
+                </>
+              ),
+              time: "14:02",
+            },
+            { kind: "text", side: "out", text: "Yes", time: "14:03" },
+            {
+              kind: "text",
+              side: "in",
+              text: "Booking now. Comfort sedan, ₦1,650, ETA 6 min.",
+              time: "14:03",
+            },
           ]}
         />
       }
@@ -131,13 +98,26 @@ export function FareSplitFeature() {
       watermark="SPLIT"
       mockupAlt="Moveasy fare split on WhatsApp"
       mockupPlaceholder={
-        <ChatPlaceholder
-          title="Moveasy"
+        <WhatsappChat
           bubbles={[
-            { side: "out", text: "Split this ride with +234 803 555 0142." },
-            { side: "in", text: "₦700 each. Sent Tunde a confirm link." },
-            { side: "in", text: "Tunde confirmed ✅" },
-            { side: "out", text: "Sweet." },
+            {
+              kind: "text",
+              side: "out",
+              text: "Split this ride with +234 803 555 0142.",
+              time: "16:18",
+            },
+            {
+              kind: "text",
+              side: "in",
+              text: (
+                <>
+                  ₦700 each. Sent <b>Tunde</b> a confirm link.
+                </>
+              ),
+              time: "16:18",
+            },
+            { kind: "text", side: "in", text: "Tunde confirmed ✅", time: "16:19" },
+            { kind: "text", side: "out", text: "Sweet.", time: "16:19" },
           ]}
         />
       }

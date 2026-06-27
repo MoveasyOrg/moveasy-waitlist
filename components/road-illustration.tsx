@@ -111,15 +111,30 @@ export function RoadIllustration() {
       aria-hidden
     >
       <defs>
-        {/* Roads bleed into the navy gradient at both ends */}
-        <linearGradient id="roadFade" x1="0" y1="0" x2="0" y2="1">
+        {/* Vertical fade so roads dissolve into navy at top + bottom */}
+        <linearGradient id="roadFadeV" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="white" stopOpacity="0" />
           <stop offset="45%" stopColor="white" stopOpacity="1" />
           <stop offset="80%" stopColor="white" stopOpacity="1" />
           <stop offset="100%" stopColor="white" stopOpacity="0" />
         </linearGradient>
+        {/* Horizontal fade so the outermost roads dissolve at the page edges */}
+        <linearGradient id="roadFadeH" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="white" stopOpacity="0" />
+          <stop offset="12%" stopColor="white" stopOpacity="1" />
+          <stop offset="88%" stopColor="white" stopOpacity="1" />
+          <stop offset="100%" stopColor="white" stopOpacity="0" />
+        </linearGradient>
         <mask id="roadMask">
-          <rect width="880" height="440" fill="url(#roadFade)" />
+          {/* Compose the two fades by multiplying — both rects use mask channel
+              alpha so the visible band is the intersection of vertical + horizontal */}
+          <rect width="880" height="440" fill="url(#roadFadeV)" />
+          <rect
+            width="880"
+            height="440"
+            fill="url(#roadFadeH)"
+            style={{ mixBlendMode: "multiply" }}
+          />
         </mask>
       </defs>
 

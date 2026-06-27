@@ -19,6 +19,10 @@ export function normalizeName(value: string): string {
   return value.trim().replace(/\s+/g, " ").slice(0, 80);
 }
 
+export function normalizeCity(value: string): string {
+  return value.trim().slice(0, 80);
+}
+
 export function firstName(full: string | null | undefined): string | null {
   if (!full) return null;
   const first = full.trim().split(/\s+/)[0];
