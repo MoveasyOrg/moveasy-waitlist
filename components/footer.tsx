@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { LogoMark } from "./logo";
 
 type Column = {
@@ -58,13 +59,19 @@ const socials: { label: string; href: string; icon: React.ReactNode }[] = [
   },
 ];
 
-/** Decorative top-down road that scrolls across the footer. Subtle. */
+/**
+ * Decorative top-down road across the footer, with a couple of vehicles
+ * cruising along it via animateMotion.
+ */
 function FooterRoad() {
+  const path =
+    "M -50 180 C 150 120, 350 220, 540 150, 720 80, 900 180, 1100 120, 1300 60";
+
   return (
     <svg
       viewBox="0 0 1200 240"
       preserveAspectRatio="xMidYMid slice"
-      className="absolute inset-0 h-full w-full opacity-50"
+      className="absolute inset-0 h-full w-full"
       aria-hidden
     >
       <defs>
@@ -78,18 +85,51 @@ function FooterRoad() {
           <rect width="1200" height="240" fill="url(#footerFade)" />
         </mask>
       </defs>
-      <g mask="url(#footerRoadMask)" fill="none" strokeLinecap="round">
-        <path
-          d="M -50 180 C 150 120, 350 220, 540 150, 720 80, 900 180, 1100 120, 1300 60"
-          stroke="rgba(67,81,176,0.45)"
-          strokeWidth="44"
-        />
-        <path
-          d="M -50 180 C 150 120, 350 220, 540 150, 720 80, 900 180, 1100 120, 1300 60"
-          stroke="rgba(255,255,255,0.18)"
-          strokeWidth="1.2"
-          strokeDasharray="6 10"
-        />
+
+      <g mask="url(#footerRoadMask)">
+        <g fill="none" strokeLinecap="round">
+          <path d={path} stroke="rgba(67,81,176,0.42)" strokeWidth="44" />
+          <path
+            d={path}
+            stroke="rgba(255,255,255,0.16)"
+            strokeWidth="1.2"
+            strokeDasharray="6 10"
+          />
+        </g>
+
+        {/* Two vehicles riding the road. They face +X locally and pre-rotate
+            so rotate="auto" aligns with the path tangent. */}
+        <g>
+          <g transform="rotate(90)">
+            <rect x="-9" y="-15" width="18" height="30" rx="5" fill="#F2A93B" />
+            <rect x="-6" y="-8" width="12" height="10" rx="2" fill="rgba(11,18,59,0.55)" />
+            <rect x="-7" y="-14" width="14" height="2" rx="1" fill="rgba(255,255,255,0.55)" />
+            <rect x="-7" y="12" width="14" height="2" rx="1" fill="rgba(255,80,80,0.7)" />
+          </g>
+          <animateMotion
+            dur="22s"
+            repeatCount="indefinite"
+            rotate="auto"
+            path={path}
+          />
+        </g>
+        <g>
+          <g transform="rotate(90)">
+            <rect x="-9" y="-15" width="18" height="30" rx="5" fill="#FFFFFF" />
+            <rect x="-6" y="-8" width="12" height="10" rx="2" fill="rgba(11,18,59,0.6)" />
+            <rect x="-7" y="-14" width="14" height="2" rx="1" fill="rgba(11,18,59,0.4)" />
+            <rect x="-7" y="12" width="14" height="2" rx="1" fill="rgba(255,80,80,0.7)" />
+          </g>
+          <animateMotion
+            dur="28s"
+            repeatCount="indefinite"
+            rotate="auto"
+            path={path}
+            keyTimes="0; 0.55; 0.55; 1"
+            keyPoints="0.45; 1; 0; 0.45"
+            calcMode="linear"
+          />
+        </g>
       </g>
     </svg>
   );
@@ -104,7 +144,7 @@ export function Footer() {
       <div className="relative mx-auto max-w-6xl px-5 sm:px-8">
         <div className="grid gap-12 sm:grid-cols-[1.4fr,1fr,1fr]">
           <div>
-            <a
+            <Link
               href="/"
               aria-label="Moveasy home"
               className="inline-flex items-center gap-2 text-white"
@@ -113,7 +153,7 @@ export function Footer() {
               <span className="text-xl font-semibold tracking-tight">
                 Moveasy
               </span>
-            </a>
+            </Link>
             <p className="mt-4 max-w-xs text-sm text-white/65">
               Movement Made Easy. Born in Akwa, built for Africa.
             </p>
@@ -131,19 +171,33 @@ export function Footer() {
                 {col.title}
               </h3>
               <ul className="mt-4 space-y-2.5">
-                {col.links.map((l) => (
-                  <li key={l.label}>
-                    <a
-                      href={l.href}
-                      className="text-sm text-white/80 transition hover:text-white"
-                      {...(l.external
-                        ? { target: "_blank", rel: "noopener noreferrer" }
-                        : {})}
-                    >
-                      {l.label}
-                    </a>
-                  </li>
-                ))}
+                {col.links.map((l) => {
+                  const isExternal = l.external || /^https?:/.test(l.href);
+                  if (isExternal) {
+                    return (
+                      <li key={l.label}>
+                        <a
+                          href={l.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-white/80 transition hover:text-white"
+                        >
+                          {l.label}
+                        </a>
+                      </li>
+                    );
+                  }
+                  return (
+                    <li key={l.label}>
+                      <Link
+                        href={l.href}
+                        className="text-sm text-white/80 transition hover:text-white"
+                      >
+                        {l.label}
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ))}
@@ -154,19 +208,30 @@ export function Footer() {
             &copy; {year} Moveasy. All rights reserved.
           </p>
           <ul className="flex items-center gap-2">
-            {socials.map((s) => (
-              <li key={s.label}>
-                <a
-                  href={s.href}
-                  target={s.href.startsWith("http") ? "_blank" : undefined}
-                  rel={s.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                  aria-label={s.label}
-                  className="grid h-10 w-10 place-items-center rounded-full border border-white/12 bg-white/5 text-white/85 transition hover:border-white/30 hover:bg-white/10 hover:text-white"
-                >
-                  {s.icon}
-                </a>
-              </li>
-            ))}
+            {socials.map((s) => {
+              const isExternal = /^https?:/.test(s.href);
+              const className =
+                "grid h-10 w-10 place-items-center rounded-full border border-white/12 bg-white/5 text-white/85 transition hover:border-white/30 hover:bg-white/10 hover:text-white";
+              return (
+                <li key={s.label}>
+                  {isExternal ? (
+                    <a
+                      href={s.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={s.label}
+                      className={className}
+                    >
+                      {s.icon}
+                    </a>
+                  ) : (
+                    <Link href={s.href} aria-label={s.label} className={className}>
+                      {s.icon}
+                    </Link>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>

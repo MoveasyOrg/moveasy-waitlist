@@ -4,14 +4,15 @@
  */
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://moveasy.africa";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://trymoveasy.vercel.app";
 
 const NAVY = "#0B123B";
 const NAVY_DEEP = "#060920";
 const ACCENT = "#F2A93B";
 const PAPER = "#FAFAF7";
 
-export function welcomeEmailHtml(): string {
+export function welcomeEmailHtml(firstName?: string | null): string {
+  const hi = firstName ? `Hi ${escapeHtml(firstName)},` : "Hi,";
   return `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -40,6 +41,9 @@ export function welcomeEmailHtml(): string {
       <!-- Body -->
       <div style="padding:32px 32px 8px;">
         <p style="margin:0 0 14px;font-size:15px;line-height:1.65;color:rgba(255,255,255,0.85);">
+          ${hi}
+        </p>
+        <p style="margin:0 0 14px;font-size:15px;line-height:1.65;color:rgba(255,255,255,0.85);">
           Thanks for signing up. You're now in line for the WhatsApp-native way to move around Nigeria.
         </p>
         <p style="margin:0 0 14px;font-size:15px;line-height:1.65;color:rgba(255,255,255,0.85);">
@@ -51,7 +55,7 @@ export function welcomeEmailHtml(): string {
 
         <!-- CTA -->
         <a href="${SITE_URL}" style="display:inline-block;background:${PAPER};color:${NAVY};padding:12px 20px;border-radius:9999px;text-decoration:none;font-size:14px;font-weight:600;letter-spacing:-0.01em;">
-          Visit moveasy.africa
+          Visit Moveasy
         </a>
       </div>
 
@@ -71,9 +75,12 @@ export function welcomeEmailHtml(): string {
 </html>`;
 }
 
-export function welcomeEmailText(): string {
+export function welcomeEmailText(firstName?: string | null): string {
+  const hi = firstName ? `Hi ${firstName},` : "Hi,";
   return [
     "You're on the list.",
+    "",
+    hi,
     "",
     "Thanks for signing up to Moveasy. You're in line for the WhatsApp-native way to move around Nigeria.",
     "",
@@ -87,4 +94,13 @@ export function welcomeEmailText(): string {
     "",
     "Moveasy — Awka, Nigeria",
   ].join("\n");
+}
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }

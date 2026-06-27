@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Toast, type ToastTone } from "./toast";
 
-type Status = "idle" | "loading" | "success" | "error";
+type Status = "idle" | "loading" | "success" | "duplicate" | "error";
 
 function Spinner() {
   return (
@@ -25,9 +25,10 @@ function Spinner() {
 }
 
 export function WaitlistForm() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
-  const [toast, setToast] = useState<{ message: string; tone: ToastTone } | null>(null);
+  const [toast, setToast] = useState<{ message: string; tone: ToastTone; name?: string | null } | null>(null);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -37,9 +38,14 @@ export function WaitlistForm() {
       const res = await fetch("/api/waitlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ name, email }),
       });
-      const data = (await res.json()) as { ok: boolean; error?: string; duplicate?: boolean };
+      const data = (await res.json()) as {
+        ok: boolean;
+        error?: string;
+        duplicate?: boolean;
+        firstName?: string | null;
+      };
       if (!res.ok || !data.ok) {
         setStatus("error");
         setToast({
@@ -48,14 +54,23 @@ export function WaitlistForm() {
         });
         return;
       }
-      setStatus("success");
-      setToast({
-        message: data.duplicate
-          ? "You're already on the list. We'll be in touch."
-          : "You're on the list. Watch your inbox.",
-        tone: "success",
-      });
-      setEmail("");
+      if (data.duplicate) {
+        setStatus("duplicate");
+        setToast({
+          message: "Looks like you're already on the list. We'll be in touch the day we open up your city.",
+          tone: "duplicate",
+          name: data.firstName ?? null,
+        });
+      } else {
+        setStatus("success");
+        setToast({
+          message: "You're on the list. Watch your inbox for the welcome email.",
+          tone: "success",
+          name: data.firstName ?? null,
+        });
+        setName("");
+        setEmail("");
+      }
     } catch {
       setStatus("error");
       setToast({ message: "Network failed. Try again.", tone: "error" });
@@ -66,8 +81,20 @@ export function WaitlistForm() {
     <>
       <form
         onSubmit={onSubmit}
-        className="glass shadow-glass mx-auto flex w-full max-w-md items-center gap-2 rounded-full p-2"
+        className="glass shadow-glass mx-auto flex w-full max-w-md flex-col gap-2 rounded-3xl p-2 sm:flex-row sm:items-center sm:gap-2 sm:rounded-full"
       >
+        <input
+          type="text"
+          autoComplete="given-name"
+          placeholder="First name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          aria-label="First name"
+          maxLength={60}
+          disabled={status === "loading"}
+          className="h-12 rounded-full bg-transparent px-5 text-base text-white placeholder:text-white/55 focus:outline-none disabled:opacity-60 sm:w-32 sm:shrink-0"
+        />
+        <span aria-hidden className="hidden h-6 w-px bg-white/15 sm:block" />
         <input
           type="email"
           required
@@ -100,6 +127,7 @@ export function WaitlistForm() {
       <Toast
         message={toast?.message ?? null}
         tone={toast?.tone ?? "success"}
+        firstName={toast?.name ?? null}
         onDismiss={() => setToast(null)}
       />
     </>

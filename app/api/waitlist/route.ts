@@ -2,7 +2,12 @@ import { NextResponse, type NextRequest } from "next/server";
 import { Resend } from "resend";
 import { getSupabase, hasServiceRole } from "@/lib/supabase";
 import { rateLimit } from "@/lib/rate-limit";
-import { isValidEmail, normalizeEmail } from "@/lib/utils";
+import {
+  firstName,
+  isValidEmail,
+  normalizeEmail,
+  normalizeName,
+} from "@/lib/utils";
 import { welcomeEmailHtml, welcomeEmailText } from "@/lib/emails";
 
 export const runtime = "nodejs";
@@ -16,7 +21,6 @@ function clientKey(req: NextRequest): string {
 async function currentCount(): Promise<number> {
   const baseline = Number(process.env.NEXT_PUBLIC_WAITLIST_BASELINE ?? "128");
   const sb = getSupabase();
-  // Counting rows requires bypassing RLS; only the service role can do that.
   if (!sb || !hasServiceRole()) return baseline;
   const { count } = await sb
     .from("waitlist")
@@ -38,7 +42,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  let body: { email?: unknown } = {};
+  let body: { email?: unknown; name?: unknown } = {};
   try {
     body = await req.json();
   } catch {
@@ -56,15 +60,19 @@ export async function POST(req: NextRequest) {
   }
 
   const email = normalizeEmail(body.email);
+  const rawName = typeof body.name === "string" ? body.name : "";
+  const name = normalizeName(rawName) || null;
   const ua = req.headers.get("user-agent") ?? null;
   const referer = req.headers.get("referer") ?? null;
 
   let duplicate = false;
+  let storedName: string | null = name;
+
   const sb = getSupabase();
   if (sb) {
     const { error } = await sb
       .from("waitlist")
-      .insert({ email, ip_hash: key, user_agent: ua, referer });
+      .insert({ email, name, ip_hash: key, user_agent: ua, referer });
 
     if (error) {
       const isDupe =
@@ -72,7 +80,17 @@ export async function POST(req: NextRequest) {
         /duplicate/i.test(error.message ?? "");
       if (isDupe) {
         duplicate = true;
+        // Look up the existing name so the toast / email can use it.
+        if (hasServiceRole()) {
+          const { data } = await sb
+            .from("waitlist")
+            .select("name")
+            .eq("email", email)
+            .maybeSingle();
+          if (data?.name) storedName = data.name;
+        }
       } else {
+        console.error("[waitlist] insert error", error);
         return NextResponse.json(
           { ok: false, error: "Could not save your signup." },
           { status: 500 },
@@ -81,17 +99,20 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  const greet = firstName(storedName);
+
+  // Send the welcome email on a fresh signup only — don't spam duplicates.
   const resendKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM_EMAIL;
-  if (resendKey && from && !duplicate) {
+  const from = process.env.RESEND_FROM_EMAIL ?? "Moveasy <onboarding@resend.dev>";
+  if (resendKey && !duplicate) {
     try {
       const resend = new Resend(resendKey);
       const result = await resend.emails.send({
         from,
         to: email,
-        subject: "You're on the Moveasy waitlist",
-        html: welcomeEmailHtml(),
-        text: welcomeEmailText(),
+        subject: greet ? `Welcome to Moveasy, ${greet}` : "You're on the Moveasy waitlist",
+        html: welcomeEmailHtml(greet),
+        text: welcomeEmailText(greet),
       });
       if (result.error) {
         console.error("[waitlist] resend send error", result.error);
@@ -104,6 +125,7 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({
     ok: true,
     duplicate,
+    firstName: greet,
     count: await currentCount(),
   });
 }

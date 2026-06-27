@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { LogoMark } from "./logo";
 
@@ -63,7 +64,7 @@ export function Nav() {
         className="absolute top-0 left-0 right-0 z-50 px-5 pt-5 sm:px-8 sm:pt-7"
       >
         <nav className="mx-auto flex max-w-6xl items-center justify-between">
-          <a
+          <Link
             href="/"
             aria-label="Moveasy home"
             className="flex items-center gap-2 text-white transition hover:opacity-80"
@@ -72,18 +73,18 @@ export function Nav() {
             <span className="text-lg font-semibold tracking-tight sm:text-xl">
               Moveasy
             </span>
-          </a>
+          </Link>
 
           {/* Desktop links */}
           <div className="hidden items-center gap-8 sm:flex">
             {links.map((l) => (
-              <a
+              <Link
                 key={l.href}
                 href={l.href}
                 className="text-base font-medium text-white/85 transition hover:text-white"
               >
                 {l.label}
-              </a>
+              </Link>
             ))}
           </div>
 
@@ -129,7 +130,7 @@ export function Nav() {
               <ul className="flex flex-col">
                 {links.map((l) => (
                   <li key={l.href}>
-                    <a
+                    <Link
                       href={l.href}
                       onClick={() => setOpen(false)}
                       className="flex items-center justify-between rounded-2xl px-5 py-4 text-lg font-medium text-white/90 transition hover:bg-white/10 hover:text-white"
@@ -139,7 +140,7 @@ export function Nav() {
                         <path d="M5 12h14" />
                         <path d="m13 5 7 7-7 7" />
                       </svg>
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>

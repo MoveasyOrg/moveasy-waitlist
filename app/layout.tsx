@@ -10,13 +10,17 @@ const sans = DM_Sans({
 });
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://moveasy.africa";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://trymoveasy.vercel.app";
+
+const TITLE = "Moveasy | Move anywhere, from WhatsApp";
+const DESCRIPTION =
+  "WhatsApp-native ride hailing for Nigeria. Book rides, plan trips, and split fares from a chat. No app to install, no data plan to burn.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Moveasy | Movement Made Easy",
-  description:
-    "WhatsApp-native ride-hailing for Nigeria. Book rides, plan trips, and split fares from a chat. Born in Akwa. Built for Africa.",
+  title: TITLE,
+  description: DESCRIPTION,
+  applicationName: "Moveasy",
   keywords: [
     "Moveasy",
     "ride hailing Nigeria",
@@ -26,22 +30,23 @@ export const metadata: Metadata = {
     "Awka rides",
   ],
   authors: [{ name: "Moveasy" }],
+  creator: "Moveasy",
+  publisher: "Moveasy",
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     url: SITE_URL,
     siteName: "Moveasy",
-    title: "Moveasy | Movement Made Easy",
-    description:
-      "Book a ride from WhatsApp. Built for how Africa actually moves.",
+    title: TITLE,
+    description: DESCRIPTION,
     locale: "en_NG",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Moveasy | Movement Made Easy",
-    description:
-      "WhatsApp-native ride-hailing for Nigeria. Born in Akwa. Built for Africa.",
+    site: "@moveasyhq",
     creator: "@moveasyhq",
+    title: TITLE,
+    description: DESCRIPTION,
   },
   icons: {
     icon: [
