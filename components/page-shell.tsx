@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Nav } from "./nav";
 import { Footer } from "./footer";
 
@@ -14,10 +15,20 @@ export function PageShell({
   return (
     <main className="min-h-screen bg-navy-900 text-white">
       <Nav />
-      <section className="relative isolate overflow-hidden bg-hero-radial pb-16 pt-32 sm:pt-40">
+      <section className="relative isolate overflow-hidden bg-hero-radial pb-16 pt-28 sm:pt-36">
         <div aria-hidden className="absolute inset-0 grid-floor" />
         <div className="relative mx-auto max-w-3xl px-5">
-          <h1 className="text-balance text-4xl font-medium leading-tight tracking-tight sm:text-5xl">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/5 px-3.5 py-1.5 text-xs font-medium text-white/80 transition hover:border-white/30 hover:bg-white/10 hover:text-white"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m12 19-7-7 7-7" />
+              <path d="M19 12H5" />
+            </svg>
+            Back to home
+          </Link>
+          <h1 className="mt-6 text-balance text-4xl font-medium leading-tight tracking-tight sm:text-5xl">
             {title}
           </h1>
           {intro && (

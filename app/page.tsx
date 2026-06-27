@@ -3,7 +3,6 @@ import { Hero } from "@/components/hero";
 import { WhatsappDemo } from "@/components/whatsapp-demo";
 import { WhyMoveasy } from "@/components/why-moveasy";
 import {
-  VoiceBookingFeature,
   PhotoBookingFeature,
   FareSplitFeature,
 } from "@/components/feature-sections";
@@ -20,14 +19,13 @@ export default function Page() {
       <Hero />
       <Bridge from={COLORS.navyMid} to={COLORS.navyDeep} height={32} />
       <WhatsappDemo />
-      <Bridge from={COLORS.navyDeep} to={COLORS.paper} height={40} />
-      <WhyMoveasy />
-      <VoiceBookingFeature />
-      <Bridge from={COLORS.paper} to="#EFEAFB" height={32} />
+      <Bridge from={COLORS.navyDeep} to="#EFEAFB" height={40} />
       <PhotoBookingFeature />
       <Bridge from="#EFEAFB" to="#FCF5E2" height={32} />
       <FareSplitFeature />
-      <Bridge from="#FCF5E2" to={COLORS.navy} height={40} />
+      <Bridge from="#FCF5E2" to={COLORS.paper} height={32} />
+      <WhyMoveasy />
+      <Bridge from={COLORS.paper} to={COLORS.navy} height={40} />
       <Coverage />
       <Bridge from={COLORS.navy} to={COLORS.navyDeep} height={40} />
       <Footer />

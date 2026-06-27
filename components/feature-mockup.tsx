@@ -109,18 +109,18 @@ export function FeatureMockup({
 
   return (
     <section
-      className={`relative overflow-hidden py-20 sm:py-28 ${TONES[tone]}`}
+      className={`relative overflow-hidden py-14 sm:py-20 ${TONES[tone]}`}
     >
       {watermark && (
         <span
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 select-none text-[24vw] font-semibold leading-none tracking-tight opacity-[0.05] sm:text-[18vw]"
+          className="pointer-events-none absolute inset-x-0 bottom-0 select-none text-[24vw] font-semibold leading-none tracking-tight opacity-[0.05] sm:text-[16vw]"
         >
           {watermark}
         </span>
       )}
 
-      <div className="relative mx-auto grid max-w-6xl gap-12 px-5 sm:px-8 lg:grid-cols-2 lg:items-center lg:gap-16">
+      <div className="relative mx-auto grid max-w-6xl gap-10 px-5 sm:px-8 lg:grid-cols-2 lg:items-center lg:gap-12">
         {/* Copy */}
         <div className={side === "right" ? "lg:order-1" : "lg:order-2"}>
           <p
@@ -129,19 +129,19 @@ export function FeatureMockup({
             {eyebrow}
           </p>
           <h2
-            className={`mt-4 text-balance text-3xl font-semibold leading-[1.1] tracking-tight sm:text-4xl md:text-5xl ${titleColor}`}
+            className={`mt-4 text-balance text-3xl font-semibold leading-[1.08] tracking-tight sm:text-4xl ${titleColor}`}
           >
             {title}
           </h2>
           <p
-            className={`mt-5 max-w-md text-pretty text-base leading-relaxed sm:text-lg ${bodyColor}`}
+            className={`mt-4 max-w-md text-pretty text-base leading-relaxed ${bodyColor}`}
           >
             {body}
           </p>
           {ctaLabel && (
             <a
               href={ctaHref ?? "#waitlist"}
-              className={`mt-8 inline-flex h-12 items-center justify-center rounded-full px-6 text-sm font-medium transition ${
+              className={`mt-6 inline-flex h-11 items-center justify-center rounded-full px-5 text-sm font-medium transition ${
                 isLight
                   ? "bg-ink text-white hover:bg-navy"
                   : "bg-white text-navy hover:bg-accent hover:text-ink"
@@ -154,17 +154,17 @@ export function FeatureMockup({
 
         {/* Mockup + decorations */}
         <div className={side === "right" ? "lg:order-2" : "lg:order-1"}>
-          <div className="relative mx-auto w-full max-w-[420px]">
+          <div className="relative mx-auto w-full max-w-[300px] sm:max-w-[320px]">
             {/* Phone frame */}
-            <div className="relative aspect-[9/19.5] rounded-[44px] border border-white/10 bg-navy-900 p-3 shadow-[0_30px_80px_-30px_rgba(6,9,32,0.6)]">
-              <div className="absolute left-1/2 top-3 z-10 h-6 w-32 -translate-x-1/2 rounded-full bg-black" />
-              <div className="relative h-full w-full overflow-hidden rounded-[34px] bg-navy">
+            <div className="relative aspect-[9/19.5] rounded-[36px] border border-white/10 bg-navy-900 p-2.5 shadow-[0_24px_60px_-20px_rgba(6,9,32,0.55)]">
+              <div className="absolute left-1/2 top-2.5 z-10 h-5 w-24 -translate-x-1/2 rounded-full bg-black" />
+              <div className="relative h-full w-full overflow-hidden rounded-[28px] bg-navy">
                 {mockupSrc ? (
                   <Image
                     src={mockupSrc}
                     alt={mockupAlt}
                     fill
-                    sizes="(min-width: 1024px) 420px, 90vw"
+                    sizes="(min-width: 1024px) 320px, 80vw"
                     className="object-cover"
                   />
                 ) : (

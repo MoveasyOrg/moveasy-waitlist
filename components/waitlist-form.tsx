@@ -81,7 +81,7 @@ export function WaitlistForm() {
     <>
       <form
         onSubmit={onSubmit}
-        className="glass shadow-glass mx-auto flex w-full max-w-md flex-col gap-2 rounded-3xl p-2 sm:flex-row sm:items-center sm:gap-2 sm:rounded-full"
+        className="glass shadow-glass mx-auto flex w-full max-w-lg flex-col gap-2 rounded-[28px] p-2 sm:flex-row sm:items-center sm:gap-0 sm:rounded-full"
       >
         <input
           type="text"
@@ -92,9 +92,13 @@ export function WaitlistForm() {
           aria-label="First name"
           maxLength={60}
           disabled={status === "loading"}
-          className="h-12 rounded-full bg-transparent px-5 text-base text-white placeholder:text-white/55 focus:outline-none disabled:opacity-60 sm:w-32 sm:shrink-0"
+          className="h-12 rounded-full bg-transparent px-5 text-base text-white placeholder:text-white/55 focus:outline-none disabled:opacity-60 sm:w-44 sm:shrink-0 sm:rounded-l-full sm:rounded-r-none"
         />
-        <span aria-hidden className="hidden h-6 w-px bg-white/15 sm:block" />
+        {/* Visible separator on every viewport — horizontal on mobile, vertical on desktop */}
+        <span
+          aria-hidden
+          className="mx-3 block h-px w-auto self-stretch bg-white/25 sm:mx-0 sm:h-6 sm:w-px sm:bg-white/15"
+        />
         <input
           type="email"
           required
@@ -105,12 +109,12 @@ export function WaitlistForm() {
           onChange={(e) => setEmail(e.target.value)}
           aria-label="Email address"
           disabled={status === "loading"}
-          className="h-12 flex-1 min-w-0 rounded-full bg-transparent px-5 text-base text-white placeholder:text-white/55 focus:outline-none disabled:opacity-60"
+          className="h-12 flex-1 min-w-0 rounded-full bg-transparent px-5 text-base text-white placeholder:text-white/55 focus:outline-none disabled:opacity-60 sm:rounded-none sm:px-4"
         />
         <button
           type="submit"
           disabled={status === "loading"}
-          className="grid h-12 shrink-0 grid-flow-col items-center gap-2 rounded-full bg-white px-6 text-sm font-medium text-navy transition hover:bg-accent hover:text-ink disabled:cursor-not-allowed disabled:bg-white/85"
+          className="grid h-12 shrink-0 grid-flow-col items-center gap-2 rounded-full bg-white px-6 text-sm font-medium text-navy transition hover:bg-accent hover:text-ink disabled:cursor-not-allowed disabled:bg-white/85 sm:ml-1"
           aria-busy={status === "loading"}
         >
           {status === "loading" ? (

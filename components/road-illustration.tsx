@@ -114,8 +114,8 @@ export function RoadIllustration() {
         {/* Roads bleed into the navy gradient at both ends */}
         <linearGradient id="roadFade" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="white" stopOpacity="0" />
-          <stop offset="32%" stopColor="white" stopOpacity="1" />
-          <stop offset="78%" stopColor="white" stopOpacity="1" />
+          <stop offset="45%" stopColor="white" stopOpacity="1" />
+          <stop offset="80%" stopColor="white" stopOpacity="1" />
           <stop offset="100%" stopColor="white" stopOpacity="0" />
         </linearGradient>
         <mask id="roadMask">

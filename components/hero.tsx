@@ -34,13 +34,13 @@ export function Hero() {
           No app to install, no data plan to burn.
         </motion.p>
 
-        <motion.div {...fade(0.45)} className="mt-8 w-full sm:mt-10">
+        <motion.div {...fade(0.45)} className="relative z-10 mt-8 w-full sm:mt-10">
           <WaitlistForm />
         </motion.div>
 
         <div
           aria-hidden
-          className="pointer-events-none mt-10 w-full sm:mt-auto sm:pt-6"
+          className="pointer-events-none relative z-0 -mt-10 w-full sm:-mt-16 sm:flex-1"
         >
           <RoadIllustration />
         </div>
