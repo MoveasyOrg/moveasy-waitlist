@@ -21,7 +21,7 @@ const faqs: AccordionItem[] = [
   },
   {
     q: "How do I pay?",
-    a: "Card, bank transfer, or USSD. Cash is supported when the driver opts in. Fare splits with friends work directly from the chat.",
+    a: "Card, bank transfer, USSD, or crypto. Cash is supported when the driver opts in. Fare splits with friends work directly from the chat.",
   },
   {
     q: "Will this work on a 2G connection?",

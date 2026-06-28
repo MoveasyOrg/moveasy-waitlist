@@ -7,6 +7,7 @@ import {
   FareSplitFeature,
 } from "@/components/feature-sections";
 import { Coverage } from "@/components/coverage";
+import { EarlyPartners } from "@/components/early-partners";
 import { Footer } from "@/components/footer";
 import { Bridge, COLORS } from "@/components/bridge";
 
@@ -17,7 +18,8 @@ export default function Page() {
     <main className="min-h-screen bg-navy-900 text-white">
       <Nav />
       <Hero />
-      <Bridge from={COLORS.navyMid} to={COLORS.navyDeep} height={32} />
+      {/* Very small bridge on mobile so the road blends straight into the next section without a big dark gap */}
+      <Bridge from={COLORS.navyMid} to={COLORS.navyDeep} height={8} />
       <WhatsappDemo />
       <Bridge from={COLORS.navyDeep} to="#EFEAFB" height={40} />
       <PhotoBookingFeature />
@@ -27,6 +29,7 @@ export default function Page() {
       <WhyMoveasy />
       <Bridge from={COLORS.paper} to={COLORS.navy} height={40} />
       <Coverage />
+      <EarlyPartners />
       <Bridge from={COLORS.navy} to={COLORS.navyDeep} height={40} />
       <Footer />
     </main>

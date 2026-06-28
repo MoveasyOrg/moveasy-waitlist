@@ -16,12 +16,8 @@ export function Hero() {
     <section className="relative isolate overflow-hidden bg-hero-radial">
       <div aria-hidden className="absolute inset-0 grid-floor" />
 
-      {/* Full-bleed road layer that extends edge-to-edge and fades at bottom */}
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[46vh] min-h-[280px] sm:h-[52vh] sm:min-h-[340px] md:h-[56vh]">
-        <RoadIllustration />
-      </div>
-
-      <div className="relative mx-auto flex max-w-6xl flex-col items-center px-5 pb-0 pt-28 sm:min-h-[100svh] sm:pt-36">
+      {/* Content column (centered) */}
+      <div className="relative mx-auto flex max-w-6xl flex-col items-center px-5 pb-0 pt-28 sm:pt-36">
         <motion.h1
           {...fade(0.1)}
           className="text-balance text-center text-[40px] font-medium leading-[1.04] tracking-tight text-white sm:text-6xl md:text-7xl"
@@ -43,9 +39,15 @@ export function Hero() {
         <motion.div {...fade(0.45)} className="relative z-10 mt-8 w-full sm:mt-10" id="waitlist">
           <WaitlistForm />
         </motion.div>
+      </div>
 
-        {/* Spacer so content doesn't collide with the full-bleed road at bottom */}
-        <div className="h-[42vh] min-h-[260px] sm:h-[46vh] sm:min-h-[300px] md:h-[50vh]" aria-hidden />
+      {/* Full-width road strip directly under the form (extends to the very edges).
+          Shorter on mobile to avoid huge empty gap before next section. */}
+      <div
+        aria-hidden
+        className="relative z-0 -mt-2 w-full overflow-hidden h-[210px] sm:h-[260px] md:h-[300px] sm:-mt-1"
+      >
+        <RoadIllustration />
       </div>
     </section>
   );
