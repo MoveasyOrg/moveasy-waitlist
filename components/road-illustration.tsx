@@ -212,11 +212,11 @@ export function RoadIllustration() {
       aria-hidden
     >
       <defs>
-        {/* Mask: fade top (into hero content), sides (to viewport edges), and bottom (into page gradient) */}
+        {/* Mask: fade top (under form), sides full width, bottom fade */}
         <linearGradient id="cityFadeV" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="white" stopOpacity="0" />
-          <stop offset="18%" stopColor="white" stopOpacity="1" />
-          <stop offset="78%" stopColor="white" stopOpacity="1" />
+          <stop offset="11%" stopColor="white" stopOpacity="1" />
+          <stop offset="58%" stopColor="white" stopOpacity="1" />
           <stop offset="100%" stopColor="white" stopOpacity="0" />
         </linearGradient>
         <linearGradient id="cityFadeH" x1="0" y1="0" x2="1" y2="0">

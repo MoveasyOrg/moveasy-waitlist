@@ -16,18 +16,18 @@ export function PageIllustration({
 }) {
   const isBg = variant === "background";
 
-  // Shared low-opacity palette for backgrounds so they sit softly in the navy hero
+  // Shared low-opacity palette for backgrounds — bumped up so they are visible but still blended
   const bgOpacity = isBg ? 0.08 : 1;
-  const bgAccent = "rgba(242,169,59,0.08)";
-  const bgPaper = "rgba(250,250,247,0.07)";
-  const bgNavy = "rgba(27,42,143,0.12)";
+  const bgAccent = "rgba(242,169,59,0.22)";
+  const bgPaper = "rgba(250,250,247,0.18)";
+  const bgNavy = "rgba(27,42,143,0.22)";
 
   if (kind === "about") {
     if (isBg) {
       return (
         <svg
           viewBox="0 0 420 420"
-          className="absolute -right-6 -top-6 h-[320px] w-[320px] opacity-40 sm:-right-4 sm:h-[380px] sm:w-[380px] lg:-right-8 lg:top-2 lg:h-[460px] lg:w-[460px]"
+          className="absolute -right-6 -top-6 h-[320px] w-[320px] opacity-[0.58] sm:-right-4 sm:h-[380px] sm:w-[380px] lg:-right-8 lg:top-2 lg:h-[460px] lg:w-[460px]"
           aria-hidden
         >
           <defs>
@@ -43,8 +43,8 @@ export function PageIllustration({
           <circle cx="200" cy="180" r="26" fill={bgAccent} />
           <circle cx="200" cy="180" r="10" fill="rgba(27,42,143,0.35)" />
           <path d="M200 206 L200 242" stroke={bgAccent} strokeWidth="5" strokeLinecap="round" />
-          <path d="M95 188 Q150 155 200 180 Q255 205 300 165" stroke="rgba(255,255,255,0.08)" strokeWidth="4" fill="none" strokeLinecap="round" strokeDasharray="6 9" />
-          <path d="M200 180 Q210 235 160 275" stroke="rgba(255,255,255,0.08)" strokeWidth="4" fill="none" strokeLinecap="round" strokeDasharray="6 9" />
+          <path d="M95 188 Q150 155 200 180 Q255 205 300 165" stroke="rgba(255,255,255,0.14)" strokeWidth="4" fill="none" strokeLinecap="round" strokeDasharray="6 9" />
+          <path d="M200 180 Q210 235 160 275" stroke="rgba(255,255,255,0.14)" strokeWidth="4" fill="none" strokeLinecap="round" strokeDasharray="6 9" />
         </svg>
       );
     }
@@ -78,11 +78,11 @@ export function PageIllustration({
   if (kind === "faqs") {
     if (isBg) {
       return (
-        <svg viewBox="0 0 420 420" className="absolute -right-10 top-6 h-[340px] w-[340px] opacity-35 sm:-right-6 sm:h-[400px] sm:w-[400px] lg:-right-4 lg:h-[480px] lg:w-[480px]" aria-hidden>
+        <svg viewBox="0 0 420 420" className="absolute -right-10 top-6 h-[340px] w-[340px] opacity-[0.58] sm:-right-6 sm:h-[400px] sm:w-[400px] lg:-right-4 lg:h-[480px] lg:w-[480px]" aria-hidden>
           <path d="M60 110 q0 -32 32 -32 L230 78 q32 0 32 32 L280 185 q0 32 -32 32 L125 230 L85 265 L92 230 q-38 0 -38 -32 Z" fill={bgAccent} />
-          <text x="165" y="168" textAnchor="middle" fontSize="78" fontWeight="800" fill="rgba(27,42,143,0.22)">?</text>
+          <text x="165" y="168" textAnchor="middle" fontSize="78" fontWeight="800" fill="rgba(27,42,143,0.32)">?</text>
           <path d="M165 240 q0 -28 28 -28 L325 212 q28 0 28 28 L380 300 q0 28 -28 28 L235 340 L195 370 L202 340 q-35 0 -35 -28 Z" fill={bgPaper} />
-          <text x="280" y="295" textAnchor="middle" fontSize="58" fontWeight="800" fill="rgba(27,42,143,0.18)">!</text>
+          <text x="280" y="295" textAnchor="middle" fontSize="58" fontWeight="800" fill="rgba(27,42,143,0.28)">!</text>
         </svg>
       );
     }
@@ -99,7 +99,7 @@ export function PageIllustration({
   if (kind === "privacy") {
     if (isBg) {
       return (
-        <svg viewBox="0 0 420 420" className="absolute -right-8 top-2 h-[300px] w-[300px] opacity-40 sm:-right-2 sm:h-[360px] sm:w-[360px] lg:right-4 lg:h-[440px] lg:w-[440px]" aria-hidden>
+        <svg viewBox="0 0 420 420" className="absolute -right-8 top-2 h-[300px] w-[300px] opacity-[0.58] sm:-right-2 sm:h-[360px] sm:w-[360px] lg:right-4 lg:h-[440px] lg:w-[440px]" aria-hidden>
           <path d="M210 55 L330 100 L330 195 Q330 285 210 335 Q90 285 90 195 L90 100 Z" fill={bgAccent} />
           <path d="M210 78 L310 115 L310 195 Q310 268 210 310 Q110 268 110 195 L110 115 Z" fill={bgPaper} />
           <rect x="162" y="178" width="96" height="82" rx="10" fill="rgba(27,42,143,0.35)" />
@@ -124,7 +124,7 @@ export function PageIllustration({
   // terms
   if (isBg) {
     return (
-      <svg viewBox="0 0 420 420" className="absolute -right-6 top-8 h-[310px] w-[310px] opacity-35 sm:right-0 sm:h-[370px] sm:w-[370px] lg:-right-2 lg:h-[450px] lg:w-[450px]" aria-hidden>
+      <svg viewBox="0 0 420 420" className="absolute -right-6 top-8 h-[310px] w-[310px] opacity-[0.58] sm:right-0 sm:h-[370px] sm:w-[370px] lg:-right-2 lg:h-[450px] lg:w-[450px]" aria-hidden>
         <rect x="80" y="60" width="240" height="295" rx="18" fill={bgPaper} />
         <rect x="95" y="60" width="11" height="295" fill={bgAccent} />
         {[110,145,180,215,250,285].map((y, i) => (
