@@ -45,7 +45,7 @@ export function Hero() {
           Shorter on mobile to avoid huge empty gap before next section. */}
       <div
         aria-hidden
-        className="relative z-0 -mt-1 w-full overflow-hidden h-[210px] sm:h-[260px] md:h-[300px]"
+        className="relative z-0 -mt-2 w-full overflow-hidden h-[210px] sm:h-[260px] md:h-[300px] sm:-mt-1"
       >
         <RoadIllustration />
       </div>
