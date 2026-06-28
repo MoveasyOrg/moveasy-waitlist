@@ -206,29 +206,30 @@ function Tree({ cx, cy, r = 14, color = "#5b8a4f" }: { cx: number; cy: number; r
 export function RoadIllustration() {
   return (
     <svg
-      viewBox="0 0 1200 600"
+      viewBox="0 0 1200 620"
       preserveAspectRatio="xMidYMax slice"
-      className="block w-full h-[300px] sm:h-[360px] md:h-[440px]"
+      className="block w-full"
       aria-hidden
     >
       <defs>
-        {/* Mask so the whole scene melts into the surrounding navy gradient */}
+        {/* Mask: fade top (into hero content), sides (to viewport edges), and bottom (into page gradient) */}
         <linearGradient id="cityFadeV" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="white" stopOpacity="0" />
-          <stop offset="22%" stopColor="white" stopOpacity="1" />
-          <stop offset="100%" stopColor="white" stopOpacity="1" />
+          <stop offset="18%" stopColor="white" stopOpacity="1" />
+          <stop offset="78%" stopColor="white" stopOpacity="1" />
+          <stop offset="100%" stopColor="white" stopOpacity="0" />
         </linearGradient>
         <linearGradient id="cityFadeH" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stopColor="white" stopOpacity="0" />
-          <stop offset="3%" stopColor="white" stopOpacity="1" />
-          <stop offset="97%" stopColor="white" stopOpacity="1" />
+          <stop offset="2.5%" stopColor="white" stopOpacity="1" />
+          <stop offset="97.5%" stopColor="white" stopOpacity="1" />
           <stop offset="100%" stopColor="white" stopOpacity="0" />
         </linearGradient>
         <mask id="cityMask">
-          <rect width="1200" height="600" fill="url(#cityFadeV)" />
+          <rect width="1200" height="620" fill="url(#cityFadeV)" />
           <rect
             width="1200"
-            height="600"
+            height="620"
             fill="url(#cityFadeH)"
             style={{ mixBlendMode: "multiply" }}
           />
@@ -236,15 +237,15 @@ export function RoadIllustration() {
         {/* Ground gradient — warm cream → soft yellow */}
         <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#FFE9B5" />
-          <stop offset="60%" stopColor="#FFD98A" />
+          <stop offset="55%" stopColor="#FFD98A" />
           <stop offset="100%" stopColor="#FFC76A" />
         </linearGradient>
       </defs>
 
       <g mask="url(#cityMask)">
-        {/* Ground band — straight horizon, runs all the way to the SVG edges */}
+        {/* Ground band — extends full width and deep so bottom can softly fade into the page */}
         <path
-          d="M -40 215 L 1240 215 L 1240 620 L -40 620 Z"
+          d="M -60 205 L 1260 205 L 1260 680 L -60 680 Z"
           fill="url(#ground)"
         />
 
