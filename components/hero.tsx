@@ -16,8 +16,7 @@ export function Hero() {
     <section className="relative isolate overflow-hidden bg-hero-radial">
       <div aria-hidden className="absolute inset-0 grid-floor" />
 
-      {/* Content column (centered) */}
-      <div className="relative mx-auto flex max-w-6xl flex-col items-center px-5 pb-0 pt-28 sm:pt-36">
+      <div className="relative mx-auto flex max-w-6xl flex-col items-center px-5 pt-28 sm:pt-36">
         <motion.h1
           {...fade(0.1)}
           className="text-balance text-center text-[40px] font-medium leading-[1.04] tracking-tight text-white sm:text-6xl md:text-7xl"
@@ -41,12 +40,14 @@ export function Hero() {
         </motion.div>
       </div>
 
-      {/* Road strip under form. Height reduced on desktop per request. */}
+      {/* Full-width cityscape — cropped to horizontal road + buildings */}
       <div
         aria-hidden
-        className="relative z-0 -mt-2 w-full overflow-hidden h-[180px] sm:h-[210px] md:h-[220px]"
+        className="relative z-0 -mt-6 w-full overflow-hidden sm:-mt-8"
       >
-        <RoadIllustration />
+        <div className="h-[185px] sm:h-[220px] md:h-[240px]">
+          <RoadIllustration />
+        </div>
       </div>
     </section>
   );

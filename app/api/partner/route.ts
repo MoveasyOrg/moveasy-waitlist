@@ -38,20 +38,17 @@ export async function POST(req: NextRequest) {
   const role = typeof body.role === "string" ? body.role : "Other";
   const message = typeof body.message === "string" ? body.message.slice(0, 2000) : null;
 
-  // Try to store in Supabase (create table if you want persistence + admin list)
   const sb = getSupabase();
   if (sb) {
-    try {
-      await sb.from("partner_leads").insert({
-        email,
-        name,
-        role,
-        message,
-        ip_hash: key,
-      });
-    } catch (e) {
-      // Table may not exist yet — still send the email notification
-      console.error("[partner] supabase insert failed (table may be missing)", e);
+    const { error } = await sb.from("partner_leads").insert({
+      email,
+      name,
+      role,
+      message,
+      ip_hash: key,
+    });
+    if (error) {
+      console.error("[partner] supabase insert error", error);
     }
   }
 

@@ -206,17 +206,17 @@ function Tree({ cx, cy, r = 14, color = "#5b8a4f" }: { cx: number; cy: number; r
 export function RoadIllustration() {
   return (
     <svg
-      viewBox="0 0 1200 620"
-      preserveAspectRatio="xMidYMax slice"
-      className="block w-full"
+      viewBox="0 0 1200 340"
+      preserveAspectRatio="xMidYMid slice"
+      className="block h-full w-full"
       aria-hidden
     >
       <defs>
         {/* Mask: fade top (under form), sides full width, bottom fade */}
         <linearGradient id="cityFadeV" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="white" stopOpacity="0" />
-          <stop offset="11%" stopColor="white" stopOpacity="1" />
-          <stop offset="58%" stopColor="white" stopOpacity="1" />
+          <stop offset="16%" stopColor="white" stopOpacity="1" />
+          <stop offset="88%" stopColor="white" stopOpacity="1" />
           <stop offset="100%" stopColor="white" stopOpacity="0" />
         </linearGradient>
         <linearGradient id="cityFadeH" x1="0" y1="0" x2="1" y2="0">
@@ -226,10 +226,10 @@ export function RoadIllustration() {
           <stop offset="100%" stopColor="white" stopOpacity="0" />
         </linearGradient>
         <mask id="cityMask">
-          <rect width="1200" height="620" fill="url(#cityFadeV)" />
+          <rect width="1200" height="340" fill="url(#cityFadeV)" />
           <rect
             width="1200"
-            height="620"
+            height="340"
             fill="url(#cityFadeH)"
             style={{ mixBlendMode: "multiply" }}
           />

@@ -18,8 +18,6 @@ export default function Page() {
     <main className="min-h-screen bg-navy-900 text-white">
       <Nav />
       <Hero />
-      {/* Very small bridge on mobile so the road blends straight into the next section without a big dark gap */}
-      <Bridge from={COLORS.navyMid} to={COLORS.navyDeep} height={8} />
       <WhatsappDemo />
       <Bridge from={COLORS.navyDeep} to="#EFEAFB" height={40} />
       <PhotoBookingFeature />
