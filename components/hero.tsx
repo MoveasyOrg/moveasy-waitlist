@@ -32,7 +32,7 @@ export function Hero() {
           {...fade(0.3)}
           className="mt-5 max-w-xl text-pretty text-center text-base text-white/75 sm:mt-6 sm:text-lg"
         >
-          Book rides, plan trips, split fares. All from WhatsApp.
+          Book rides, plan trips, split fares. Pay with card, USSD or crypto. All from WhatsApp.
           No app to install, no data plan to burn.
         </motion.p>
 
@@ -41,11 +41,10 @@ export function Hero() {
         </motion.div>
       </div>
 
-      {/* Full-width road strip directly under the form (extends to the very edges).
-          Shorter on mobile to avoid huge empty gap before next section. */}
+      {/* Road strip under form. Height reduced on desktop per request. */}
       <div
         aria-hidden
-        className="relative z-0 -mt-2 w-full overflow-hidden h-[210px] sm:h-[260px] md:h-[300px] sm:-mt-1"
+        className="relative z-0 -mt-2 w-full overflow-hidden h-[180px] sm:h-[210px] md:h-[220px]"
       >
         <RoadIllustration />
       </div>
