@@ -59,10 +59,79 @@ const socials: { label: string; href: string; icon: React.ReactNode }[] = [
   },
 ];
 
+/** Subtle road + cars that fades into the partner section above and footer below. */
+function FooterRoad() {
+  const path =
+    "M -50 180 C 150 120, 350 220, 540 150, 720 80, 900 180, 1100 120, 1300 60";
+
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-x-0 -top-8 h-52 overflow-hidden">
+      <svg
+        viewBox="0 0 1200 240"
+        preserveAspectRatio="xMidYMid slice"
+        className="h-full w-full opacity-70"
+      >
+        <defs>
+          <linearGradient id="footerFade" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="white" stopOpacity="0" />
+            <stop offset="45%" stopColor="white" stopOpacity="0.35" />
+            <stop offset="75%" stopColor="white" stopOpacity="0.7" />
+            <stop offset="100%" stopColor="white" stopOpacity="0" />
+          </linearGradient>
+          <mask id="footerRoadMask">
+            <rect width="1200" height="240" fill="url(#footerFade)" />
+          </mask>
+        </defs>
+
+        <g mask="url(#footerRoadMask)">
+          <g fill="none" strokeLinecap="round">
+            <path d={path} stroke="rgba(42,53,104,0.28)" strokeWidth="36" />
+            <path
+              d={path}
+              stroke="rgba(255,236,170,0.12)"
+              strokeWidth="1"
+              strokeDasharray="6 10"
+            />
+          </g>
+
+          <g>
+            <g transform="rotate(90)">
+              <rect x="-9" y="-15" width="18" height="30" rx="5" fill="#F2A93B" />
+              <rect x="-6" y="-8" width="12" height="10" rx="2" fill="rgba(11,18,59,0.55)" />
+            </g>
+            <animateMotion dur="22s" repeatCount="indefinite" rotate="auto" path={path} />
+          </g>
+          <g>
+            <g transform="rotate(90)">
+              <rect x="-9" y="-15" width="18" height="30" rx="5" fill="#FFFFFF" />
+              <rect x="-6" y="-8" width="12" height="10" rx="2" fill="rgba(11,18,59,0.6)" />
+            </g>
+            <animateMotion
+              dur="28s"
+              repeatCount="indefinite"
+              rotate="auto"
+              path={path}
+              keyTimes="0; 0.55; 0.55; 1"
+              keyPoints="0.45; 1; 0; 0.45"
+              calcMode="linear"
+            />
+          </g>
+        </g>
+      </svg>
+    </div>
+  );
+}
+
 export function Footer() {
   const year = new Date().getFullYear();
   return (
-    <footer className="relative overflow-hidden bg-navy-900 pt-16 pb-10 text-white/75 sm:pt-20">
+    <footer className="relative -mt-16 overflow-hidden bg-navy-900 pb-10 pt-24 text-white/75 sm:-mt-20 sm:pt-28">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#0a1030] to-navy-900"
+      />
+      <FooterRoad />
+
       <div className="relative mx-auto max-w-6xl px-5 sm:px-8">
         <div className="grid gap-12 sm:grid-cols-[1.4fr,1fr,1fr]">
           <div>

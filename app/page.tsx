@@ -28,7 +28,6 @@ export default function Page() {
       <Bridge from={COLORS.paper} to={COLORS.navy} height={40} />
       <Coverage />
       <EarlyPartners />
-      <Bridge from={COLORS.navy} to={COLORS.navyDeep} height={40} />
       <Footer />
     </main>
   );

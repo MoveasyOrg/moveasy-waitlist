@@ -49,6 +49,10 @@ export async function POST(req: NextRequest) {
     });
     if (error) {
       console.error("[partner] supabase insert error", error);
+      return NextResponse.json(
+        { ok: false, error: "Could not save your interest. Try again." },
+        { status: 500 },
+      );
     }
   }
 
