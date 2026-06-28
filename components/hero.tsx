@@ -15,6 +15,12 @@ export function Hero() {
   return (
     <section className="relative isolate overflow-hidden bg-hero-radial">
       <div aria-hidden className="absolute inset-0 grid-floor" />
+
+      {/* Full-bleed road layer that extends edge-to-edge and fades at bottom */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[46vh] min-h-[280px] sm:h-[52vh] sm:min-h-[340px] md:h-[56vh]">
+        <RoadIllustration />
+      </div>
+
       <div className="relative mx-auto flex max-w-6xl flex-col items-center px-5 pb-0 pt-28 sm:min-h-[100svh] sm:pt-36">
         <motion.h1
           {...fade(0.1)}
@@ -34,16 +40,12 @@ export function Hero() {
           No app to install, no data plan to burn.
         </motion.p>
 
-        <motion.div {...fade(0.45)} className="relative z-10 mt-8 w-full sm:mt-10">
+        <motion.div {...fade(0.45)} className="relative z-10 mt-8 w-full sm:mt-10" id="waitlist">
           <WaitlistForm />
         </motion.div>
 
-        <div
-          aria-hidden
-          className="pointer-events-none relative z-0 -mt-10 w-full sm:-mt-16 sm:flex-1"
-        >
-          <RoadIllustration />
-        </div>
+        {/* Spacer so content doesn't collide with the full-bleed road at bottom */}
+        <div className="h-[42vh] min-h-[260px] sm:h-[46vh] sm:min-h-[300px] md:h-[50vh]" aria-hidden />
       </div>
     </section>
   );
