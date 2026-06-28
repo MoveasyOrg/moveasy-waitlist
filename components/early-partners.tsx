@@ -81,7 +81,10 @@ export function EarlyPartners() {
   }, [modalOpen]);
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-navy via-[#152273] to-[#0a1030] pb-28 pt-16 sm:pb-32 sm:pt-20">
+    <section
+      id="partners"
+      className="relative scroll-mt-24 overflow-hidden bg-gradient-to-b from-navy via-[#152273] to-[#0a1030] pb-28 pt-16 sm:pb-32 sm:pt-20"
+    >
       <div aria-hidden className="absolute inset-0 grid-floor opacity-25" />
       <div
         aria-hidden
