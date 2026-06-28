@@ -1,8 +1,15 @@
+"use client";
+
 /**
  * WhatsApp light-mode chat placeholder.
  * Beige doodle wallpaper, white incoming bubbles, light-green outgoing.
- * Used inside FeatureMockup until the real exported screenshot lands.
+ * Bubbles reveal in sequence when the section scrolls into view, mimicking
+ * a real conversation arriving live.
  */
+
+import { useEffect, useRef, useState } from "react";
+import { motion, useInView } from "framer-motion";
+import { LogoMark } from "./logo";
 
 export type ChatBubble =
   | {
@@ -18,7 +25,14 @@ export type ChatBubble =
   | {
       kind: "image";
       side: "in" | "out";
+      src?: string;
       caption?: string;
+    }
+  | {
+      kind: "location";
+      side: "in" | "out";
+      place: string;
+      sub?: string;
     };
 
 const WALLPAPER = (
@@ -120,7 +134,7 @@ function VoiceBubble({ side, length, time }: { side: "in" | "out"; length: strin
           (out ? "rounded-tr-sm bg-[#d9fdd3]" : "rounded-tl-sm bg-white")
         }
       >
-        <span className="grid h-6 w-6 place-items-center rounded-full bg-[#25d366] text-white">
+        <span className="grid h-6 w-6 place-items-center rounded-full bg-[#005c4b] text-white">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
             <path d="M8 5v14l11-7z" />
           </svg>
@@ -148,10 +162,12 @@ function VoiceBubble({ side, length, time }: { side: "in" | "out"; length: strin
 
 function ImageBubble({
   side,
+  src,
   caption,
   time,
 }: {
   side: "in" | "out";
+  src?: string;
   caption?: string;
   time: string;
 }) {
@@ -164,25 +180,83 @@ function ImageBubble({
           (out ? "rounded-tr-sm bg-[#d9fdd3]" : "rounded-tl-sm bg-white")
         }
       >
-        {/* Subtle "image" placeholder block — the real product shows the photo */}
-        <div className="relative h-20 w-44 overflow-hidden rounded-md bg-[linear-gradient(135deg,#9ca3af_0%,#6b7280_50%,#374151_100%)]">
-          <svg
-            className="absolute inset-0 m-auto h-7 w-7 text-white/70"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            aria-hidden
-          >
-            <rect x="3" y="3" width="18" height="18" rx="2" />
-            <circle cx="9" cy="9" r="2" />
-            <path d="m21 15-5-5L5 21" />
-          </svg>
+        <div className="relative h-24 w-44 overflow-hidden rounded-md bg-[#cbd5e1]">
+          {src ? (
+            // Decorative photo — keep it as a plain <img> so we don't need
+            // Next/Image remote-pattern config for this small thumbnail.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={src}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover"
+              loading="lazy"
+            />
+          ) : (
+            <svg
+              className="absolute inset-0 m-auto h-7 w-7 text-white/70"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              aria-hidden
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="9" cy="9" r="2" />
+              <path d="m21 15-5-5L5 21" />
+            </svg>
+          )}
         </div>
         {caption && (
           <div className="px-1.5 pt-1.5 text-[11px] leading-snug text-[#111b21]">
             {caption}
           </div>
+        )}
+        <div className="mt-0.5 flex items-center justify-end gap-1 px-1.5 pb-1 text-[9px] text-[#667781]">
+          <span>{time}</span>
+          {out && TICK}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LocationBubble({
+  side,
+  place,
+  sub,
+  time,
+}: {
+  side: "in" | "out";
+  place: string;
+  sub?: string;
+  time: string;
+}) {
+  const out = side === "out";
+  return (
+    <div className={out ? "flex justify-end" : "flex justify-start"}>
+      <div
+        className={
+          "max-w-[78%] overflow-hidden rounded-lg p-1 shadow-[0_1px_0.5px_rgba(0,0,0,0.13)] " +
+          (out ? "rounded-tr-sm bg-[#d9fdd3]" : "rounded-tl-sm bg-white")
+        }
+      >
+        <div className="relative h-16 w-44 overflow-hidden rounded-md bg-[#dde6cf]">
+          {/* Minimal "map" — concentric arcs + roads */}
+          <svg viewBox="0 0 180 64" className="absolute inset-0 h-full w-full" aria-hidden>
+            <path d="M -10 50 Q 50 30 100 40 T 200 30" stroke="#a4b08a" strokeWidth="6" fill="none" strokeLinecap="round" />
+            <path d="M -10 18 Q 60 10 120 22 T 200 12" stroke="#cbd5b2" strokeWidth="4" fill="none" strokeLinecap="round" />
+            <circle cx="92" cy="34" r="14" fill="#fff7c2" stroke="#e2c97b" strokeWidth="1" />
+            {/* Pin */}
+            <circle cx="92" cy="32" r="5" fill="#dc2626" />
+            <circle cx="92" cy="32" r="2" fill="#fff" />
+            <path d="M 92 36 L 92 48" stroke="#dc2626" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+        </div>
+        <div className="px-1.5 pt-1.5 text-[11px] font-medium leading-snug text-[#111b21]">
+          {place}
+        </div>
+        {sub && (
+          <div className="px-1.5 text-[10px] text-[#667781]">{sub}</div>
         )}
         <div className="mt-0.5 flex items-center justify-end gap-1 px-1.5 pb-1 text-[9px] text-[#667781]">
           <span>{time}</span>
@@ -234,8 +308,8 @@ export function WhatsappChat({
             <path d="m15 18-6-6 6-6" />
           </svg>
         </button>
-        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#25d366] text-[12px] font-bold">
-          M
+        <span className="grid h-8 w-8 shrink-0 place-items-center overflow-hidden rounded-full bg-[#1b2a8f] text-white">
+          <LogoMark className="h-5 w-5" />
         </span>
         <div className="min-w-0 leading-tight">
           <p className="truncate text-sm font-semibold">Moveasy</p>
@@ -260,32 +334,111 @@ export function WhatsappChat({
       {/* Wallpaper + bubbles */}
       <div className="relative flex-1 overflow-hidden">
         {WALLPAPER}
-        <ul className="relative space-y-1.5 px-2.5 py-3">
-          {bubbles.map((b, i) => {
-            if (b.kind === "text") {
-              return (
-                <li key={i}>
-                  <TextBubble side={b.side} time={b.time}>
-                    {b.text}
-                  </TextBubble>
-                </li>
-              );
-            }
-            if (b.kind === "voice") {
-              return (
-                <li key={i}>
-                  <VoiceBubble side={b.side} length={b.length} time={b.time} />
-                </li>
-              );
-            }
-            return (
-              <li key={i}>
-                <ImageBubble side={b.side} caption={b.caption} time={b.time} />
-              </li>
-            );
-          })}
-        </ul>
+        <ChatBubbles bubbles={bubbles} />
       </div>
     </div>
+  );
+}
+
+function ChatBubbles({
+  bubbles,
+}: {
+  bubbles: (ChatBubble & { time: string })[];
+}) {
+  const ref = useRef<HTMLUListElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.2 });
+  const [shown, setShown] = useState(0);
+
+  useEffect(() => {
+    if (!inView) return;
+    let cancelled = false;
+    let i = 0;
+    setShown(0);
+    const tick = () => {
+      if (cancelled) return;
+      i += 1;
+      setShown(i);
+      if (i < bubbles.length) setTimeout(tick, 650 + Math.random() * 250);
+    };
+    const start = setTimeout(tick, 320);
+    return () => {
+      cancelled = true;
+      clearTimeout(start);
+    };
+  }, [inView, bubbles.length]);
+
+  const typingNext = inView && shown < bubbles.length ? bubbles[shown] : null;
+
+  return (
+    <ul
+      ref={ref}
+      className="relative space-y-1.5 px-2.5 py-3"
+      aria-live="polite"
+    >
+      {bubbles.slice(0, shown).map((b, i) => (
+        <motion.li
+          key={i}
+          initial={{ opacity: 0, y: 6, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {renderBubble(b)}
+        </motion.li>
+      ))}
+      {typingNext && (
+        <motion.li
+          key={`typing-${shown}`}
+          initial={{ opacity: 0, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2 }}
+          className={typingNext.side === "out" ? "flex justify-end" : "flex justify-start"}
+        >
+          <span
+            className={
+              "inline-flex items-center gap-1 rounded-lg px-3 py-2 shadow-[0_1px_0.5px_rgba(0,0,0,0.13)] " +
+              (typingNext.side === "out"
+                ? "rounded-tr-sm bg-[#d9fdd3]"
+                : "rounded-tl-sm bg-white")
+            }
+            aria-label="Typing"
+          >
+            <Dot delay={0} />
+            <Dot delay={0.15} />
+            <Dot delay={0.3} />
+          </span>
+        </motion.li>
+      )}
+    </ul>
+  );
+}
+
+function Dot({ delay }: { delay: number }) {
+  return (
+    <motion.span
+      className="block h-1.5 w-1.5 rounded-full bg-[#667781]"
+      animate={{ opacity: [0.3, 1, 0.3], y: [0, -1, 0] }}
+      transition={{ duration: 0.9, repeat: Infinity, delay }}
+    />
+  );
+}
+
+function renderBubble(b: ChatBubble & { time: string }) {
+  if (b.kind === "text") {
+    return (
+      <TextBubble side={b.side} time={b.time}>
+        {b.text}
+      </TextBubble>
+    );
+  }
+  if (b.kind === "voice") {
+    return <VoiceBubble side={b.side} length={b.length} time={b.time} />;
+  }
+  if (b.kind === "image") {
+    return (
+      <ImageBubble side={b.side} src={b.src} caption={b.caption} time={b.time} />
+    );
+  }
+  return (
+    <LocationBubble side={b.side} place={b.place} sub={b.sub} time={b.time} />
   );
 }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Toast, type ToastTone } from "./toast";
 import { NIGERIAN_CITIES } from "@/lib/cities";
+import { CityCombobox } from "./city-combobox";
 
 type Status = "idle" | "loading" | "success" | "duplicate" | "error";
 
@@ -21,25 +22,6 @@ function Spinner() {
         strokeWidth="3"
         strokeLinecap="round"
       />
-    </svg>
-  );
-}
-
-function ChevronDown() {
-  return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-white/55"
-      aria-hidden
-    >
-      <path d="m6 9 6 6 6-6" />
     </svg>
   );
 }
@@ -121,25 +103,14 @@ export function WaitlistForm() {
             disabled={status === "loading"}
             className={inputClass}
           />
-          <div className="relative">
-            <select
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              aria-label="City"
-              disabled={status === "loading"}
-              className={`${inputClass} appearance-none pr-10 ${city ? "text-white" : "text-white/55"}`}
-            >
-              <option value="" className="bg-navy-900 text-white/55">
-                Your city
-              </option>
-              {NIGERIAN_CITIES.map((c) => (
-                <option key={c} value={c} className="bg-navy-900 text-white">
-                  {c}
-                </option>
-              ))}
-            </select>
-            <ChevronDown />
-          </div>
+          <CityCombobox
+            value={city}
+            onChange={setCity}
+            options={NIGERIAN_CITIES}
+            disabled={status === "loading"}
+            placeholder="Your city"
+          />
+          {/* ChevronDown is now baked into CityCombobox */}
         </div>
 
         {/* Row 2: Email + Join */}

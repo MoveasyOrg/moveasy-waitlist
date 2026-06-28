@@ -26,10 +26,23 @@ function VoiceChatPlaceholder() {
           text: (
             <>
               Confirmed ✅ Emeka in a silver Corolla, plate{" "}
-              <b>AKD-237-FG</b>.
+              <b>AKD-237-FG</b>. Live track: m.ee/t/9k2
             </>
           ),
           time: "07:43",
+        },
+        {
+          kind: "text",
+          side: "in",
+          text: "Emeka is 2 min away. He's almost at the gate.",
+          time: "07:45",
+        },
+        { kind: "text", side: "out", text: "Thanks 🙏", time: "07:45" },
+        {
+          kind: "text",
+          side: "in",
+          text: "Trip started. Safe ride 👋",
+          time: "07:47",
         },
       ]}
     />
@@ -55,33 +68,33 @@ export function WhatsappDemo() {
         {
           kind: "icon-card",
           content: "🎙",
-          position: { top: "8%", left: "-12%" },
+          position: { top: "18%", left: "-8%" },
           delay: 0.05,
         },
         {
           kind: "icon-card",
           content: "📍",
-          position: { top: "32%", left: "-14%" },
+          position: { top: "44%", left: "-10%" },
           delay: 0.12,
         },
         {
           kind: "icon-card",
           content: "🚗",
-          position: { top: "60%", left: "-10%" },
+          position: { top: "70%", left: "-6%" },
           delay: 0.2,
         },
         {
           kind: "stat",
           label: "Fare",
           value: "₦1,400",
-          position: { top: "10%", right: "-8%" },
+          position: { top: "20%", right: "-6%" },
           delay: 0.18,
         },
         {
           kind: "notification",
           title: "ETA 4 min",
           body: "Emeka · Silver Corolla",
-          position: { bottom: "8%", right: "-12%" },
+          position: { bottom: "12%", right: "-10%" },
           delay: 0.28,
         },
       ]}

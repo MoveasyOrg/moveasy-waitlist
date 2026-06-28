@@ -22,7 +22,13 @@ export function PhotoBookingFeature() {
       mockupPlaceholder={
         <WhatsappChat
           bubbles={[
-            { kind: "image", side: "out", caption: "Heading here", time: "14:02" },
+            {
+              kind: "image",
+              side: "out",
+              src: "https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=480&q=70&auto=format&fit=crop",
+              caption: "Heading here 👇",
+              time: "14:02",
+            },
             {
               kind: "text",
               side: "in",
@@ -34,12 +40,30 @@ export function PhotoBookingFeature() {
               ),
               time: "14:02",
             },
-            { kind: "text", side: "out", text: "Yes", time: "14:03" },
+            {
+              kind: "location",
+              side: "in",
+              place: "Shoprite Awka",
+              sub: "Zik Avenue, Awka",
+              time: "14:02",
+            },
+            { kind: "text", side: "out", text: "Yes, book it", time: "14:03" },
             {
               kind: "text",
               side: "in",
               text: "Booking now. Comfort sedan, ₦1,650, ETA 6 min.",
               time: "14:03",
+            },
+            {
+              kind: "text",
+              side: "in",
+              text: (
+                <>
+                  Confirmed ✅ <b>Chinedu</b> in a grey Camry, plate{" "}
+                  <b>AKD-441-CN</b>.
+                </>
+              ),
+              time: "14:04",
             },
           ]}
         />
@@ -48,33 +72,33 @@ export function PhotoBookingFeature() {
         {
           kind: "icon-card",
           content: "📷",
-          position: { top: "10%", right: "-10%" },
+          position: { top: "20%", right: "-6%" },
           delay: 0.05,
         },
         {
           kind: "icon-card",
           content: "🗺",
-          position: { top: "35%", right: "-14%" },
+          position: { top: "46%", right: "-10%" },
           delay: 0.14,
         },
         {
           kind: "icon-card",
           content: "🛍",
-          position: { top: "62%", right: "-10%" },
+          position: { top: "72%", right: "-6%" },
           delay: 0.22,
         },
         {
           kind: "notification",
           title: "Shoprite Awka",
           body: "Recognised in 1.2s",
-          position: { top: "8%", left: "-14%" },
+          position: { top: "20%", left: "-10%" },
           delay: 0.2,
         },
         {
           kind: "stat",
           label: "Trip",
           value: "₦1,650",
-          position: { bottom: "14%", left: "-8%" },
+          position: { bottom: "16%", left: "-6%" },
           delay: 0.3,
         },
       ]}
@@ -116,8 +140,25 @@ export function FareSplitFeature() {
               ),
               time: "16:18",
             },
-            { kind: "text", side: "in", text: "Tunde confirmed ✅", time: "16:19" },
-            { kind: "text", side: "out", text: "Sweet.", time: "16:19" },
+            {
+              kind: "text",
+              side: "in",
+              text: "Tunde confirmed ✅",
+              time: "16:19",
+            },
+            { kind: "text", side: "out", text: "Sweet 💸", time: "16:19" },
+            {
+              kind: "text",
+              side: "in",
+              text: "Both rides paid. Trip starting in 1 min.",
+              time: "16:20",
+            },
+            {
+              kind: "text",
+              side: "in",
+              text: "Receipt: m.ee/r/4qp",
+              time: "16:20",
+            },
           ]}
         />
       }
@@ -125,33 +166,33 @@ export function FareSplitFeature() {
         {
           kind: "icon-card",
           content: "🤝",
-          position: { top: "8%", left: "-12%" },
+          position: { top: "18%", left: "-8%" },
           delay: 0.05,
         },
         {
           kind: "icon-card",
           content: "💳",
-          position: { top: "32%", left: "-14%" },
+          position: { top: "44%", left: "-10%" },
           delay: 0.14,
         },
         {
           kind: "icon-card",
           content: "📱",
-          position: { top: "58%", left: "-10%" },
+          position: { top: "70%", left: "-6%" },
           delay: 0.22,
         },
         {
           kind: "stat",
           label: "Per head",
           value: "₦700",
-          position: { top: "10%", right: "-8%" },
+          position: { top: "20%", right: "-6%" },
           delay: 0.2,
         },
         {
           kind: "notification",
           title: "Tunde paid ₦700",
           body: "Just now · USSD",
-          position: { bottom: "10%", right: "-14%" },
+          position: { bottom: "14%", right: "-10%" },
           delay: 0.3,
         },
       ]}
