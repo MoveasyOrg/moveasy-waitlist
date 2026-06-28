@@ -70,36 +70,25 @@ export function PhotoBookingFeature() {
       }
       decorations={[
         {
-          kind: "icon-card",
-          content: "📷",
-          position: { top: "20%", right: "-6%" },
-          delay: 0.05,
-        },
-        {
-          kind: "icon-card",
-          content: "🗺",
-          position: { top: "46%", right: "-10%" },
-          delay: 0.14,
-        },
-        {
-          kind: "icon-card",
-          content: "🛍",
-          position: { top: "72%", right: "-6%" },
-          delay: 0.22,
-        },
-        {
           kind: "notification",
           title: "Shoprite Awka",
           body: "Recognised in 1.2s",
-          position: { top: "20%", left: "-10%" },
+          position: { top: "18%", left: "-10%" },
           delay: 0.2,
         },
         {
           kind: "stat",
           label: "Trip",
           value: "₦1,650",
-          position: { bottom: "16%", left: "-6%" },
-          delay: 0.3,
+          position: { top: "20%", right: "-8%" },
+          delay: 0.28,
+        },
+        {
+          kind: "notification",
+          title: "Driver assigned",
+          body: "Chinedu · Grey Camry",
+          position: { bottom: "14%", right: "-10%" },
+          delay: 0.36,
         },
       ]}
     />
@@ -164,36 +153,25 @@ export function FareSplitFeature() {
       }
       decorations={[
         {
-          kind: "icon-card",
-          content: "🤝",
-          position: { top: "18%", left: "-8%" },
-          delay: 0.05,
-        },
-        {
-          kind: "icon-card",
-          content: "💳",
-          position: { top: "44%", left: "-10%" },
-          delay: 0.14,
-        },
-        {
-          kind: "icon-card",
-          content: "📱",
-          position: { top: "70%", left: "-6%" },
-          delay: 0.22,
-        },
-        {
           kind: "stat",
           label: "Per head",
           value: "₦700",
-          position: { top: "20%", right: "-6%" },
+          position: { top: "16%", left: "-8%" },
           delay: 0.2,
         },
         {
           kind: "notification",
           title: "Tunde paid ₦700",
           body: "Just now · USSD",
-          position: { bottom: "14%", right: "-10%" },
-          delay: 0.3,
+          position: { top: "46%", right: "-10%" },
+          delay: 0.28,
+        },
+        {
+          kind: "notification",
+          title: "Both rides paid",
+          body: "Trip starting in 1 min",
+          position: { bottom: "14%", left: "-10%" },
+          delay: 0.36,
         },
       ]}
     />

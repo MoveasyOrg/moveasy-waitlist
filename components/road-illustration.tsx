@@ -1,115 +1,96 @@
 "use client";
 
 /**
- * Top-down view of a busy Nigerian roundabout. The roundabout sits in the
- * centre, six radial roads cut in and out, and a fleet of cars circle and
- * cross. Transparent over the navy hero gradient.
+ * Top-down Moveasy city scene: a warm cream "ground" anchors a road grid
+ * with a central roundabout, surrounded by brand-coloured buildings, parks,
+ * and vehicles. Replaces the all-blue roundabout so the hero gets the
+ * yellow/cream accents from the brand pack.
+ *
+ * Vehicles use animateMotion along paths that stay strictly within the
+ * road grid (no off-road drifting).
  */
 
 type Vehicle = {
   kind: "sedan" | "suv" | "keke" | "moto";
   color: string;
-  trim?: string;
-  /** SVG path string the vehicle follows */
   path: string;
-  /** Full loop duration in seconds */
   duration: number;
-  /** Where on the path the vehicle starts (0..1) */
   start: number;
 };
 
-// 1000 × 540 canvas. Roundabout centre (500, 270), outer road ring 130, inner
-// island 70. Roads radiate from the ring to the four cardinals + two diagonals.
-const RING_R_OUTER = 130;
-const RING_R_INNER = 90;
-const ISLAND_R = 60;
+// ViewBox 1200 × 600. Road grid:
+// - Horizontal main road at y = 360 (lane band 340 – 400 = 60 wide)
+// - Vertical road at x = 600 (lane band 580 – 640 = 60 wide)
+// - Roundabout centred (600, 360), outer 90, inner 56.
+const ROAD_W = 60;
+const RB_OUTER = 90;
+const RB_INNER = 56;
 
-// Paths describing each car's journey. Each enters from offscreen, arcs around
-// the roundabout in the correct direction (clockwise = "1" sweep flag for
-// right-hand traffic in some countries; Nigeria drives on the right so traffic
-// in a roundabout flows anti-clockwise — sweep flag 0), then exits.
 const vehicles: Vehicle[] = [
-  // North entry → East exit
+  // Horizontal sedan, west → east via roundabout (anti-clockwise around)
   {
     kind: "sedan",
     color: "#F2A93B",
-    path: "M 500 -40 L 500 140 A 130 130 0 0 0 630 270 L 1040 270",
-    duration: 12,
+    path: "M -40 360 L 510 360 A 90 90 0 0 0 600 270 A 90 90 0 0 1 690 360 L 1240 360",
+    duration: 13,
     start: 0.05,
   },
-  // East entry → South exit
+  // East → West (opposite lane, south of roundabout)
   {
     kind: "suv",
     color: "#FFFFFF",
-    path: "M 1040 270 L 630 270 A 130 130 0 0 0 500 400 L 500 580",
-    duration: 13,
-    start: 0.3,
+    path: "M 1240 380 L 690 380 A 90 90 0 0 1 600 450 A 90 90 0 0 0 510 380 L -40 380",
+    duration: 15,
+    start: 0.4,
   },
-  // South entry → West exit
+  // North → South through roundabout
   {
     kind: "sedan",
     color: "#7FB069",
-    path: "M 500 580 L 500 400 A 130 130 0 0 0 370 270 L -40 270",
+    path: "M 580 -40 L 580 270 A 90 90 0 0 0 510 360 A 90 90 0 0 1 580 450 L 580 640",
     duration: 14,
-    start: 0.1,
+    start: 0.2,
   },
-  // West entry → North exit
+  // South → North
   {
     kind: "keke",
     color: "#FFCB6E",
-    path: "M -40 270 L 370 270 A 130 130 0 0 0 500 140 L 500 -40",
-    duration: 13,
+    path: "M 620 640 L 620 450 A 90 90 0 0 0 690 360 A 90 90 0 0 1 620 270 L 620 -40",
+    duration: 14,
     start: 0.55,
   },
-  // NW entry → SE exit (diagonal)
+  // Motorbike weaving along the horizontal road
   {
     kind: "moto",
-    color: "#67E8F9",
-    path: "M -40 -20 L 400 280 A 130 130 0 1 1 600 280 L 1040 580",
-    duration: 16,
-    start: 0.2,
-  },
-  // Pure roundabout looper (just circles)
-  {
-    kind: "sedan",
     color: "#E94560",
-    path:
-      "M 500 140 A 130 130 0 0 0 370 270 A 130 130 0 0 0 500 400 A 130 130 0 0 0 630 270 A 130 130 0 0 0 500 140 Z",
-    duration: 10,
-    start: 0,
+    path: "M -40 372 L 510 372 A 90 90 0 0 0 600 282 A 90 90 0 0 1 690 372 L 1240 372",
+    duration: 11,
+    start: 0.3,
   },
-  // NE entry → SW exit
+  // Pure roundabout looper
   {
     kind: "sedan",
     color: "#A7C7E7",
-    path: "M 1040 -20 L 600 280 A 130 130 0 1 1 400 280 L -40 580",
-    duration: 18,
-    start: 0.4,
+    path:
+      "M 600 270 A 90 90 0 0 0 510 360 A 90 90 0 0 0 600 450 A 90 90 0 0 0 690 360 A 90 90 0 0 0 600 270 Z",
+    duration: 9,
+    start: 0,
   },
 ];
 
-/**
- * Top-down sedan/SUV/keke/moto rendered as SVG. Drawn pointing along +Y in
- * local coordinates with a length axis on Y; the outer <g> applies a 90°
- * pre-rotation so animateMotion's rotate="auto" (which aligns +X with the
- * path tangent) leaves the car oriented along the road.
- */
 function Car({ kind, color }: { kind: Vehicle["kind"]; color: string }) {
-  const tireColor = "rgba(11,18,59,0.85)";
+  const tire = "rgba(11,18,59,0.85)";
   const glass = "rgba(255,255,255,0.18)";
   const glassMid = "rgba(255,255,255,0.08)";
 
   if (kind === "moto") {
     return (
       <g transform="rotate(90)">
-        {/* Frame */}
         <rect x="-2.5" y="-9" width="5" height="18" rx="2.5" fill={color} />
-        {/* Rider helmet */}
         <circle cx="0" cy="-3" r="3.2" fill="rgba(11,18,59,0.85)" />
         <circle cx="0" cy="-3" r="2" fill={glass} />
-        {/* Wheels */}
-        <rect x="-2" y="-12" width="4" height="3" rx="0.8" fill={tireColor} />
-        <rect x="-2" y="9" width="4" height="3" rx="0.8" fill={tireColor} />
+        <rect x="-2" y="-12" width="4" height="3" rx="0.8" fill={tire} />
+        <rect x="-2" y="9" width="4" height="3" rx="0.8" fill={tire} />
       </g>
     );
   }
@@ -117,215 +98,244 @@ function Car({ kind, color }: { kind: Vehicle["kind"]; color: string }) {
   if (kind === "keke") {
     return (
       <g transform="rotate(90)">
-        {/* Body (trapezoid — narrower in front) */}
-        <path
-          d="M -6 -10 L 6 -10 L 8 10 L -8 10 Z"
-          fill={color}
-        />
-        {/* Canopy */}
+        <path d="M -6 -10 L 6 -10 L 8 10 L -8 10 Z" fill={color} />
         <rect x="-6" y="-7" width="12" height="12" rx="1" fill="rgba(11,18,59,0.55)" />
-        {/* Front bumper highlight */}
         <rect x="-6" y="-11" width="12" height="1.5" rx="0.5" fill="rgba(255,255,255,0.55)" />
-        {/* Tail */}
         <rect x="-7" y="9" width="14" height="1.5" rx="0.5" fill="rgba(255,80,80,0.7)" />
-        {/* Wheels */}
-        <rect x="-9" y="-3" width="1.5" height="6" rx="0.5" fill={tireColor} />
-        <rect x="7.5" y="-3" width="1.5" height="6" rx="0.5" fill={tireColor} />
+        <rect x="-9" y="-3" width="1.5" height="6" rx="0.5" fill={tire} />
+        <rect x="7.5" y="-3" width="1.5" height="6" rx="0.5" fill={tire} />
       </g>
     );
   }
 
-  // Sedan / SUV share the same shape, SUV is slightly chunkier
   const isSUV = kind === "suv";
-  const halfWidth = isSUV ? 9 : 8;
-  const halfLength = isSUV ? 16 : 15;
+  const hw = isSUV ? 9 : 8;
+  const hl = isSUV ? 16 : 15;
 
   return (
     <g transform="rotate(90)">
-      {/* Body */}
-      <rect
-        x={-halfWidth}
-        y={-halfLength}
-        width={halfWidth * 2}
-        height={halfLength * 2}
-        rx="4.5"
-        fill={color}
-      />
-      {/* Hood highlight */}
-      <rect
-        x={-halfWidth + 1}
-        y={-halfLength + 1}
-        width={halfWidth * 2 - 2}
-        height="3"
-        rx="1"
-        fill="rgba(255,255,255,0.18)"
-      />
-      {/* Front windshield */}
+      <rect x={-hw} y={-hl} width={hw * 2} height={hl * 2} rx="4.5" fill={color} />
+      <rect x={-hw + 1} y={-hl + 1} width={hw * 2 - 2} height="3" rx="1" fill="rgba(255,255,255,0.2)" />
       <path
-        d={`M ${-halfWidth + 1.5} ${-halfLength + 5} L ${halfWidth - 1.5} ${-halfLength + 5} L ${halfWidth - 2.5} ${-halfLength + 11} L ${-halfWidth + 2.5} ${-halfLength + 11} Z`}
+        d={`M ${-hw + 1.5} ${-hl + 5} L ${hw - 1.5} ${-hl + 5} L ${hw - 2.5} ${-hl + 11} L ${-hw + 2.5} ${-hl + 11} Z`}
         fill={glass}
       />
-      {/* Roof */}
-      <rect
-        x={-halfWidth + 2}
-        y={-halfLength + 11}
-        width={(halfWidth - 2) * 2}
-        height={halfLength * 2 - 22}
-        fill="rgba(11,18,59,0.42)"
-      />
-      {/* Rear windshield */}
+      <rect x={-hw + 2} y={-hl + 11} width={(hw - 2) * 2} height={hl * 2 - 22} fill="rgba(11,18,59,0.42)" />
       <path
-        d={`M ${-halfWidth + 2.5} ${halfLength - 11} L ${halfWidth - 2.5} ${halfLength - 11} L ${halfWidth - 1.5} ${halfLength - 5} L ${-halfWidth + 1.5} ${halfLength - 5} Z`}
+        d={`M ${-hw + 2.5} ${hl - 11} L ${hw - 2.5} ${hl - 11} L ${hw - 1.5} ${hl - 5} L ${-hw + 1.5} ${hl - 5} Z`}
         fill={glassMid}
       />
-      {/* Side mirrors */}
-      <rect x={-halfWidth - 1.5} y={-halfLength + 7} width="1.5" height="2.5" rx="0.6" fill={color} />
-      <rect x={halfWidth} y={-halfLength + 7} width="1.5" height="2.5" rx="0.6" fill={color} />
-      {/* Headlights (front) */}
-      <rect x={-halfWidth + 1.5} y={-halfLength + 0.5} width="3" height="2" rx="0.6" fill="rgba(255,243,180,0.95)" />
-      <rect x={halfWidth - 4.5} y={-halfLength + 0.5} width="3" height="2" rx="0.6" fill="rgba(255,243,180,0.95)" />
-      {/* Taillights (back) */}
-      <rect x={-halfWidth + 1} y={halfLength - 2.5} width="4" height="2" rx="0.6" fill="rgba(255,75,75,0.95)" />
-      <rect x={halfWidth - 5} y={halfLength - 2.5} width="4" height="2" rx="0.6" fill="rgba(255,75,75,0.95)" />
-      {/* Wheels */}
-      <rect x={-halfWidth - 0.5} y={-halfLength + 3} width="1.5" height="5" rx="0.5" fill={tireColor} />
-      <rect x={halfWidth - 1} y={-halfLength + 3} width="1.5" height="5" rx="0.5" fill={tireColor} />
-      <rect x={-halfWidth - 0.5} y={halfLength - 8} width="1.5" height="5" rx="0.5" fill={tireColor} />
-      <rect x={halfWidth - 1} y={halfLength - 8} width="1.5" height="5" rx="0.5" fill={tireColor} />
+      <rect x={-hw - 1.5} y={-hl + 7} width="1.5" height="2.5" rx="0.6" fill={color} />
+      <rect x={hw} y={-hl + 7} width="1.5" height="2.5" rx="0.6" fill={color} />
+      <rect x={-hw + 1.5} y={-hl + 0.5} width="3" height="2" rx="0.6" fill="rgba(255,243,180,0.95)" />
+      <rect x={hw - 4.5} y={-hl + 0.5} width="3" height="2" rx="0.6" fill="rgba(255,243,180,0.95)" />
+      <rect x={-hw + 1} y={hl - 2.5} width="4" height="2" rx="0.6" fill="rgba(255,75,75,0.95)" />
+      <rect x={hw - 5} y={hl - 2.5} width="4" height="2" rx="0.6" fill="rgba(255,75,75,0.95)" />
+      <rect x={-hw - 0.5} y={-hl + 3} width="1.5" height="5" rx="0.5" fill={tire} />
+      <rect x={hw - 1} y={-hl + 3} width="1.5" height="5" rx="0.5" fill={tire} />
+      <rect x={-hw - 0.5} y={hl - 8} width="1.5" height="5" rx="0.5" fill={tire} />
+      <rect x={hw - 1} y={hl - 8} width="1.5" height="5" rx="0.5" fill={tire} />
+    </g>
+  );
+}
+
+/** A chowdeck-style stylised building: footprint with top-down windows. */
+function Building({
+  x,
+  y,
+  w,
+  h,
+  fill,
+  shade,
+  cols = 3,
+  rows = 4,
+}: {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  fill: string;
+  shade: string;
+  cols?: number;
+  rows?: number;
+}) {
+  const padX = w * 0.12;
+  const padY = h * 0.1;
+  const winW = ((w - padX * 2) / cols) * 0.6;
+  const winH = ((h - padY * 2) / rows) * 0.55;
+  const stepX = (w - padX * 2) / cols;
+  const stepY = (h - padY * 2) / rows;
+  return (
+    <g>
+      {/* Cast shadow */}
+      <rect x={x + 4} y={y + 6} width={w} height={h} rx="6" fill="rgba(11,18,59,0.25)" />
+      {/* Main body */}
+      <rect x={x} y={y} width={w} height={h} rx="6" fill={fill} />
+      {/* Top edge highlight */}
+      <rect x={x} y={y} width={w} height={h * 0.18} rx="6" fill={shade} />
+      {/* Windows */}
+      {Array.from({ length: rows }).map((_, r) =>
+        Array.from({ length: cols }).map((_, c) => (
+          <rect
+            key={`${r}-${c}`}
+            x={x + padX + c * stepX + (stepX - winW) / 2}
+            y={y + padY + r * stepY + (stepY - winH) / 2}
+            width={winW}
+            height={winH}
+            rx="1.2"
+            fill="rgba(11,18,59,0.32)"
+          />
+        )),
+      )}
+      {/* Roof accent line */}
+      <rect x={x + padX} y={y + 4} width={w - padX * 2} height="2" rx="1" fill="rgba(255,255,255,0.45)" />
+    </g>
+  );
+}
+
+function Tree({ cx, cy, r = 14, color = "#5b8a4f" }: { cx: number; cy: number; r?: number; color?: string }) {
+  return (
+    <g>
+      <circle cx={cx + 1.5} cy={cy + 2.5} r={r} fill="rgba(11,18,59,0.25)" />
+      <circle cx={cx} cy={cy} r={r} fill={color} />
+      <circle cx={cx - r * 0.35} cy={cy - r * 0.25} r={r * 0.32} fill="rgba(255,255,255,0.12)" />
     </g>
   );
 }
 
 export function RoadIllustration() {
-  const cx = 500;
-  const cy = 270;
-
-  // Road segments: from offscreen → roundabout outer ring, in 4 cardinal + 2 diagonal directions.
-  const roads = [
-    "M 500 -40 L 500 140", // N in
-    "M 500 400 L 500 580", // S out
-    "M -40 270 L 370 270", // W in
-    "M 630 270 L 1040 270", // E out
-    "M -40 -20 L 400 280", // NW in
-    "M 600 280 L 1040 580", // SE out
-    "M 1040 -20 L 600 280", // NE in
-    "M 400 280 L -40 580", // SW out
-  ];
-
   return (
     <svg
-      viewBox="0 0 1000 540"
+      viewBox="0 0 1200 600"
       preserveAspectRatio="xMidYMax slice"
-      className="block w-full h-[300px] sm:h-[360px] md:h-[420px]"
+      className="block w-full h-[300px] sm:h-[360px] md:h-[440px]"
       aria-hidden
     >
       <defs>
-        <linearGradient id="roadFadeV" x1="0" y1="0" x2="0" y2="1">
+        {/* Mask so the whole scene melts into the surrounding navy gradient */}
+        <linearGradient id="cityFadeV" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="white" stopOpacity="0" />
-          <stop offset="38%" stopColor="white" stopOpacity="1" />
-          <stop offset="82%" stopColor="white" stopOpacity="1" />
+          <stop offset="22%" stopColor="white" stopOpacity="1" />
+          <stop offset="100%" stopColor="white" stopOpacity="1" />
+        </linearGradient>
+        <linearGradient id="cityFadeH" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="white" stopOpacity="0" />
+          <stop offset="8%" stopColor="white" stopOpacity="1" />
+          <stop offset="92%" stopColor="white" stopOpacity="1" />
           <stop offset="100%" stopColor="white" stopOpacity="0" />
         </linearGradient>
-        <linearGradient id="roadFadeH" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="white" stopOpacity="0" />
-          <stop offset="14%" stopColor="white" stopOpacity="1" />
-          <stop offset="86%" stopColor="white" stopOpacity="1" />
-          <stop offset="100%" stopColor="white" stopOpacity="0" />
-        </linearGradient>
-        <radialGradient id="roundaboutFade" cx="0.5" cy="0.5" r="0.55">
-          <stop offset="0%" stopColor="white" stopOpacity="1" />
-          <stop offset="70%" stopColor="white" stopOpacity="1" />
-          <stop offset="100%" stopColor="white" stopOpacity="0.55" />
-        </radialGradient>
-        <mask id="roadMask">
-          <rect width="1000" height="540" fill="url(#roadFadeV)" />
+        <mask id="cityMask">
+          <rect width="1200" height="600" fill="url(#cityFadeV)" />
           <rect
-            width="1000"
-            height="540"
-            fill="url(#roadFadeH)"
+            width="1200"
+            height="600"
+            fill="url(#cityFadeH)"
             style={{ mixBlendMode: "multiply" }}
           />
         </mask>
+        {/* Ground gradient — warm cream → soft yellow */}
+        <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#FFE9B5" />
+          <stop offset="60%" stopColor="#FFD98A" />
+          <stop offset="100%" stopColor="#FFC76A" />
+        </linearGradient>
       </defs>
 
-      <g mask="url(#roadMask)">
-        {/* Roundabout outer band */}
-        <circle
-          cx={cx}
-          cy={cy}
-          r={(RING_R_OUTER + RING_R_INNER) / 2}
-          fill="none"
-          stroke="rgba(67,81,176,0.55)"
-          strokeWidth={RING_R_OUTER - RING_R_INNER}
+      <g mask="url(#cityMask)">
+        {/* Ground band (rounded top so it reads as a horizon) */}
+        <path
+          d="M -20 220 Q 200 160 600 200 T 1220 220 L 1220 620 L -20 620 Z"
+          fill="url(#ground)"
         />
-        {/* Roundabout outline */}
-        <circle
-          cx={cx}
-          cy={cy}
-          r={RING_R_OUTER}
-          fill="none"
-          stroke="rgba(255,255,255,0.10)"
-          strokeWidth="1"
-        />
-        <circle
-          cx={cx}
-          cy={cy}
-          r={RING_R_INNER}
-          fill="none"
-          stroke="rgba(255,255,255,0.10)"
-          strokeWidth="1"
-        />
-        {/* Centre lane dash */}
-        <circle
-          cx={cx}
-          cy={cy}
-          r={(RING_R_OUTER + RING_R_INNER) / 2}
-          fill="none"
-          stroke="rgba(255,255,255,0.18)"
-          strokeWidth="1.2"
-          strokeDasharray="6 10"
-        />
-        {/* Island (centre of roundabout) */}
-        <circle
-          cx={cx}
-          cy={cy}
-          r={ISLAND_R}
-          fill="rgba(67,81,176,0.18)"
-          stroke="rgba(255,255,255,0.10)"
-          strokeWidth="1"
-        />
-        {/* Decorative tree dots on the island */}
-        {[
-          [-22, -10],
-          [10, -22],
-          [22, 10],
-          [-12, 22],
-        ].map(([dx, dy], i) => (
-          <circle
-            key={i}
-            cx={cx + dx}
-            cy={cy + dy}
-            r={6}
-            fill="rgba(127,176,105,0.42)"
-            stroke="rgba(127,176,105,0.55)"
-            strokeWidth="0.6"
-          />
-        ))}
 
-        {/* Radial roads */}
-        <g fill="none" strokeLinecap="round">
-          {roads.map((d, i) => (
-            <g key={i}>
-              <path d={d} stroke="rgba(67,81,176,0.55)" strokeWidth="56" />
-              <path
-                d={d}
-                stroke="rgba(255,255,255,0.22)"
-                strokeWidth="1.2"
-                strokeDasharray="6 10"
-              />
-            </g>
+        {/* Mountains / hills silhouette behind the buildings */}
+        <path
+          d="M -40 230 L 120 170 L 220 220 L 360 160 L 500 220 L 680 180 L 820 230 L 960 170 L 1100 220 L 1240 200 L 1240 260 L -40 260 Z"
+          fill="rgba(27,42,143,0.55)"
+        />
+
+        {/* Sky stars / city lights above the horizon (subtle) */}
+        <g fill="rgba(255,255,255,0.55)">
+          {[
+            [80, 60], [180, 110], [310, 50], [420, 130], [560, 70],
+            [720, 100], [860, 60], [980, 120], [1100, 80], [240, 160],
+            [620, 150], [880, 150],
+          ].map(([sx, sy], i) => (
+            <circle key={i} cx={sx} cy={sy} r={i % 3 === 0 ? 1.4 : 1} />
           ))}
         </g>
+
+        {/* Buildings — far row (smaller, behind) */}
+        <Building x={80} y={210} w={70} h={110} fill="#4351B0" shade="#5C6CD4" cols={2} rows={4} />
+        <Building x={160} y={195} w={60} h={125} fill="#F2A93B" shade="#FFC36C" cols={2} rows={5} />
+        <Building x={240} y={205} w={70} h={115} fill="#FAFAF7" shade="#FFFFFF" cols={3} rows={4} />
+        <Building x={330} y={190} w={60} h={130} fill="#1B2A8F" shade="#3A4BC0" cols={2} rows={5} />
+        <Building x={780} y={200} w={70} h={120} fill="#FAFAF7" shade="#FFFFFF" cols={3} rows={4} />
+        <Building x={870} y={195} w={70} h={125} fill="#F2A93B" shade="#FFC36C" cols={2} rows={5} />
+        <Building x={960} y={210} w={60} h={110} fill="#E94560" shade="#FF7A8A" cols={2} rows={4} />
+        <Building x={1040} y={200} w={60} h={120} fill="#4351B0" shade="#5C6CD4" cols={2} rows={4} />
+
+        {/* Trees lining the horizon */}
+        <Tree cx={50} cy={325} r={16} color="#5b8a4f" />
+        <Tree cx={140} cy={340} r={12} color="#6ea35d" />
+        <Tree cx={410} cy={330} r={14} color="#5b8a4f" />
+        <Tree cx={460} cy={345} r={10} color="#6ea35d" />
+        <Tree cx={730} cy={330} r={13} color="#5b8a4f" />
+        <Tree cx={1130} cy={335} r={15} color="#6ea35d" />
+        <Tree cx={1180} cy={345} r={11} color="#5b8a4f" />
+
+        {/* Roads — laid AFTER mountains/trees so the road sits on the ground */}
+        <g>
+          {/* Horizontal main road body */}
+          <rect x="-40" y={360 - ROAD_W / 2} width="1280" height={ROAD_W} fill="#2A3568" />
+          {/* Vertical main road body */}
+          <rect x={600 - ROAD_W / 2} y="-40" width={ROAD_W} height="680" fill="#2A3568" />
+          {/* Road kerb highlight */}
+          <rect x="-40" y={360 - ROAD_W / 2 - 1} width="1280" height="1.5" fill="rgba(255,255,255,0.18)" />
+          <rect x="-40" y={360 + ROAD_W / 2 - 0.5} width="1280" height="1.5" fill="rgba(255,255,255,0.18)" />
+          <rect x={600 - ROAD_W / 2 - 1} y="-40" width="1.5" height="680" fill="rgba(255,255,255,0.18)" />
+          <rect x={600 + ROAD_W / 2 - 0.5} y="-40" width="1.5" height="680" fill="rgba(255,255,255,0.18)" />
+          {/* Lane dividers — dashed */}
+          <line x1="-40" y1="360" x2={600 - RB_OUTER} y2="360" stroke="rgba(255,236,170,0.85)" strokeWidth="2" strokeDasharray="14 12" />
+          <line x1={600 + RB_OUTER} y1="360" x2="1240" y2="360" stroke="rgba(255,236,170,0.85)" strokeWidth="2" strokeDasharray="14 12" />
+          <line x1="600" y1="-40" x2="600" y2={360 - RB_OUTER} stroke="rgba(255,236,170,0.85)" strokeWidth="2" strokeDasharray="14 12" />
+          <line x1="600" y1={360 + RB_OUTER} x2="600" y2="640" stroke="rgba(255,236,170,0.85)" strokeWidth="2" strokeDasharray="14 12" />
+        </g>
+
+        {/* Roundabout */}
+        <g>
+          {/* Outer road ring */}
+          <circle cx="600" cy="360" r={(RB_OUTER + RB_INNER) / 2} fill="none" stroke="#2A3568" strokeWidth={RB_OUTER - RB_INNER} />
+          {/* Lane dash on the ring */}
+          <circle cx="600" cy="360" r={(RB_OUTER + RB_INNER) / 2} fill="none" stroke="rgba(255,236,170,0.85)" strokeWidth="1.5" strokeDasharray="10 12" />
+          {/* Inner island */}
+          <circle cx="600" cy="360" r={RB_INNER} fill="#7FB069" />
+          <circle cx="600" cy="360" r={RB_INNER} fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="1" />
+          {/* Trees on the island */}
+          <Tree cx={580} cy={345} r={10} color="#3f6b3a" />
+          <Tree cx={612} cy={340} r={9} color="#4f8045" />
+          <Tree cx={595} cy={372} r={11} color="#3f6b3a" />
+        </g>
+
+        {/* Foreground vegetation strips between road + buildings */}
+        <rect x="-40" y={400} width="1280" height="20" fill="rgba(91,138,79,0.35)" />
+        <rect x="-40" y={300} width="1280" height="20" fill="rgba(91,138,79,0.35)" />
+
+        {/* Pedestrian zebra crossing approaches */}
+        {[400, 800].map((zx, i) => (
+          <g key={`zebra-${i}`}>
+            {[0, 1, 2, 3].map((s) => (
+              <rect
+                key={s}
+                x={zx + s * 12}
+                y={360 - ROAD_W / 2 + 4}
+                width="8"
+                height={ROAD_W - 8}
+                fill="rgba(255,255,255,0.65)"
+              />
+            ))}
+          </g>
+        ))}
 
         {/* Vehicles */}
         {vehicles.map((v, i) => (

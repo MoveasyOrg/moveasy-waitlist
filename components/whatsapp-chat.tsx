@@ -109,12 +109,12 @@ function TextBubble({
     <div className={out ? "flex justify-end" : "flex justify-start"}>
       <div
         className={
-          "relative max-w-[80%] rounded-lg px-2.5 py-1.5 text-[11px] leading-snug shadow-[0_1px_0.5px_rgba(0,0,0,0.13)] " +
+          "relative max-w-[80%] rounded-lg px-2.5 py-1.5 text-[13px] leading-snug shadow-[0_1px_0.5px_rgba(0,0,0,0.13)] " +
           (out ? "rounded-tr-sm bg-[#d9fdd3]" : "rounded-tl-sm bg-white")
         }
       >
         <div className="text-[#111b21]">{children}</div>
-        <div className="mt-0.5 flex items-center justify-end gap-1 text-[9px] text-[#667781]">
+        <div className="mt-0.5 flex items-center justify-end gap-1 text-[10px] text-[#667781]">
           <span>{time}</span>
           {out && TICK}
         </div>
@@ -149,8 +149,8 @@ function VoiceBubble({ side, length, time }: { side: "in" | "out"; length: strin
           ))}
         </div>
         <div className="flex flex-col items-end leading-none">
-          <span className="text-[10px] text-[#111b21]">{length}</span>
-          <span className="mt-0.5 flex items-center gap-1 text-[9px] text-[#667781]">
+          <span className="text-[11px] text-[#111b21]">{length}</span>
+          <span className="mt-0.5 flex items-center gap-1 text-[10px] text-[#667781]">
             {time}
             {out && TICK}
           </span>
@@ -207,7 +207,7 @@ function ImageBubble({
           )}
         </div>
         {caption && (
-          <div className="px-1.5 pt-1.5 text-[11px] leading-snug text-[#111b21]">
+          <div className="px-1.5 pt-1.5 text-[13px] leading-snug text-[#111b21]">
             {caption}
           </div>
         )}
@@ -256,7 +256,7 @@ function LocationBubble({
           {place}
         </div>
         {sub && (
-          <div className="px-1.5 text-[10px] text-[#667781]">{sub}</div>
+          <div className="px-1.5 text-[11px] text-[#667781]">{sub}</div>
         )}
         <div className="mt-0.5 flex items-center justify-end gap-1 px-1.5 pb-1 text-[9px] text-[#667781]">
           <span>{time}</span>
@@ -375,16 +375,24 @@ function ChatBubbles({
       className="relative space-y-1.5 px-2.5 py-3"
       aria-live="polite"
     >
-      {bubbles.slice(0, shown).map((b, i) => (
-        <motion.li
-          key={i}
-          initial={{ opacity: 0, y: 6, scale: 0.96 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-        >
-          {renderBubble(b)}
-        </motion.li>
-      ))}
+      {bubbles.slice(0, shown).map((b, i) => {
+        const isBot = b.side === "in";
+        return (
+          <motion.li
+            key={i}
+            initial={isBot ? { opacity: 0, scale: 0.85, y: 4 } : { opacity: 0, y: 6 }}
+            animate={isBot ? { opacity: 1, scale: 1, y: 0 } : { opacity: 1, y: 0 }}
+            transition={
+              isBot
+                ? { type: "spring", stiffness: 520, damping: 22, mass: 0.6 }
+                : { duration: 0.22, ease: [0.16, 1, 0.3, 1] }
+            }
+            style={{ transformOrigin: isBot ? "left center" : "right center" }}
+          >
+            {renderBubble(b)}
+          </motion.li>
+        );
+      })}
       {typingNext && (
         <motion.li
           key={`typing-${shown}`}

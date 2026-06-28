@@ -66,36 +66,25 @@ export function WhatsappDemo() {
       mockupPlaceholder={<VoiceChatPlaceholder />}
       decorations={[
         {
-          kind: "icon-card",
-          content: "🎙",
-          position: { top: "18%", left: "-8%" },
-          delay: 0.05,
-        },
-        {
-          kind: "icon-card",
-          content: "📍",
-          position: { top: "44%", left: "-10%" },
-          delay: 0.12,
-        },
-        {
-          kind: "icon-card",
-          content: "🚗",
-          position: { top: "70%", left: "-6%" },
-          delay: 0.2,
-        },
-        {
           kind: "stat",
           label: "Fare",
           value: "₦1,400",
-          position: { top: "20%", right: "-6%" },
+          position: { top: "16%", right: "-8%" },
           delay: 0.18,
         },
         {
           kind: "notification",
-          title: "ETA 4 min",
+          title: "Ride confirmed",
           body: "Emeka · Silver Corolla",
+          position: { top: "44%", left: "-10%" },
+          delay: 0.24,
+        },
+        {
+          kind: "notification",
+          title: "ETA 4 min",
+          body: "On the way to pickup",
           position: { bottom: "12%", right: "-10%" },
-          delay: 0.28,
+          delay: 0.32,
         },
       ]}
     />
