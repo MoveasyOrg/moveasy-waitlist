@@ -23,6 +23,15 @@ export type Signup = {
   created_at: string;
 };
 
+export type PartnerLead = {
+  id: string;
+  email: string;
+  name: string | null;
+  role: string | null;
+  message: string | null;
+  created_at: string;
+};
+
 export type DailyPoint = { day: string; count: number };
 export type CityPoint = { city: string | null; count: number };
 
@@ -34,7 +43,9 @@ export type AdminSnapshot = {
   growth: DailyPoint[];
   byCity: CityPoint[];
   rows: Signup[];
-  growthPct: number; // last 7d vs the prior 7d
+  growthPct: number;
+  partnerTotal: number;
+  partners: PartnerLead[];
 };
 
 export async function loadAdminSnapshot(): Promise<AdminSnapshot | null> {
@@ -82,6 +93,24 @@ export async function loadAdminSnapshot(): Promise<AdminSnapshot | null> {
       ),
     ]);
 
+  let partnerTotal = 0;
+  let partners: PartnerLead[] = [];
+  try {
+    const [partnerTotalRes, partnersRes] = await Promise.all([
+      p.query<{ count: string }>("select count(*)::text as count from public.partner_leads"),
+      p.query<PartnerLead>(
+        `select id::text as id, email, name, role, message, created_at
+         from public.partner_leads
+         order by created_at desc
+         limit 500`,
+      ),
+    ]);
+    partnerTotal = Number(partnerTotalRes.rows[0]?.count ?? "0");
+    partners = partnersRes.rows;
+  } catch (err) {
+    console.error("[admin] partner_leads query failed", err);
+  }
+
   const total = Number(totalRes.rows[0]?.count ?? "0");
   const today = Number(todayRes.rows[0]?.count ?? "0");
   const week1 = Number(week1Res.rows[0]?.count ?? "0");
@@ -98,5 +127,7 @@ export async function loadAdminSnapshot(): Promise<AdminSnapshot | null> {
     byCity: byCityRes.rows.map((r) => ({ city: r.city, count: Number(r.count) })),
     rows: rowsRes.rows,
     growthPct: Math.round(growthPct * 10) / 10,
+    partnerTotal,
+    partners,
   };
 }

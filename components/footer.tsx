@@ -59,88 +59,10 @@ const socials: { label: string; href: string; icon: React.ReactNode }[] = [
   },
 ];
 
-/**
- * Decorative top-down road across the footer, with a couple of vehicles
- * cruising along it via animateMotion.
- */
-function FooterRoad() {
-  const path =
-    "M -50 180 C 150 120, 350 220, 540 150, 720 80, 900 180, 1100 120, 1300 60";
-
-  return (
-    <svg
-      viewBox="0 0 1200 240"
-      preserveAspectRatio="xMidYMid slice"
-      className="absolute inset-0 h-full w-full"
-      aria-hidden
-    >
-      <defs>
-        <linearGradient id="footerFade" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="white" stopOpacity="0" />
-          <stop offset="30%" stopColor="white" stopOpacity="1" />
-          <stop offset="70%" stopColor="white" stopOpacity="1" />
-          <stop offset="100%" stopColor="white" stopOpacity="0" />
-        </linearGradient>
-        <mask id="footerRoadMask">
-          <rect width="1200" height="240" fill="url(#footerFade)" />
-        </mask>
-      </defs>
-
-      <g mask="url(#footerRoadMask)">
-        <g fill="none" strokeLinecap="round">
-          <path d={path} stroke="rgba(67,81,176,0.42)" strokeWidth="44" />
-          <path
-            d={path}
-            stroke="rgba(255,255,255,0.16)"
-            strokeWidth="1.2"
-            strokeDasharray="6 10"
-          />
-        </g>
-
-        {/* Two vehicles riding the road. They face +X locally and pre-rotate
-            so rotate="auto" aligns with the path tangent. */}
-        <g>
-          <g transform="rotate(90)">
-            <rect x="-9" y="-15" width="18" height="30" rx="5" fill="#F2A93B" />
-            <rect x="-6" y="-8" width="12" height="10" rx="2" fill="rgba(11,18,59,0.55)" />
-            <rect x="-7" y="-14" width="14" height="2" rx="1" fill="rgba(255,255,255,0.55)" />
-            <rect x="-7" y="12" width="14" height="2" rx="1" fill="rgba(255,80,80,0.7)" />
-          </g>
-          <animateMotion
-            dur="22s"
-            repeatCount="indefinite"
-            rotate="auto"
-            path={path}
-          />
-        </g>
-        <g>
-          <g transform="rotate(90)">
-            <rect x="-9" y="-15" width="18" height="30" rx="5" fill="#FFFFFF" />
-            <rect x="-6" y="-8" width="12" height="10" rx="2" fill="rgba(11,18,59,0.6)" />
-            <rect x="-7" y="-14" width="14" height="2" rx="1" fill="rgba(11,18,59,0.4)" />
-            <rect x="-7" y="12" width="14" height="2" rx="1" fill="rgba(255,80,80,0.7)" />
-          </g>
-          <animateMotion
-            dur="28s"
-            repeatCount="indefinite"
-            rotate="auto"
-            path={path}
-            keyTimes="0; 0.55; 0.55; 1"
-            keyPoints="0.45; 1; 0; 0.45"
-            calcMode="linear"
-          />
-        </g>
-      </g>
-    </svg>
-  );
-}
-
 export function Footer() {
   const year = new Date().getFullYear();
   return (
     <footer className="relative overflow-hidden bg-navy-900 pt-16 pb-10 text-white/75 sm:pt-20">
-      <FooterRoad />
-
       <div className="relative mx-auto max-w-6xl px-5 sm:px-8">
         <div className="grid gap-12 sm:grid-cols-[1.4fr,1fr,1fr]">
           <div>

@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { LogoMark } from "@/components/logo";
 import type { AdminSnapshot } from "@/lib/admin-db";
 
+type AdminTab = "waitlist" | "partners";
+
 function fmtNumber(n: number) {
   return n.toLocaleString("en-NG");
 }
@@ -93,6 +95,7 @@ export default function AdminDashboard() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
+  const [tab, setTab] = useState<AdminTab>("waitlist");
   const [signingOut, setSigningOut] = useState(false);
 
   async function load() {
@@ -131,6 +134,22 @@ export default function AdminDashboard() {
 
   function exportCsv() {
     if (!snap) return;
+    if (tab === "partners") {
+      const header = ["id", "name", "email", "role", "message", "created_at"];
+      const rows = filteredPartners.map((r) =>
+        [r.id, r.name ?? "", r.email, r.role ?? "", r.message ?? "", r.created_at]
+          .map((v) => `"${String(v).replace(/"/g, '""')}"`)
+          .join(","),
+      );
+      const blob = new Blob([header.join(",") + "\n" + rows.join("\n")], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `moveasy-partners-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      return;
+    }
     const header = ["id", "name", "city", "email", "created_at"];
     const rows = snap.rows.map((r) =>
       [r.id, r.name ?? "", r.city ?? "", r.email, r.created_at]
@@ -158,6 +177,18 @@ export default function AdminDashboard() {
     );
   }) ?? [];
 
+  const filteredPartners =
+    snap?.partners.filter((r) => {
+      if (!query) return true;
+      const q = query.toLowerCase();
+      return (
+        r.email.toLowerCase().includes(q) ||
+        (r.name ?? "").toLowerCase().includes(q) ||
+        (r.role ?? "").toLowerCase().includes(q) ||
+        (r.message ?? "").toLowerCase().includes(q)
+      );
+    }) ?? [];
+
   return (
     <main className="min-h-screen bg-navy-900 text-white">
       <header className="border-b border-white/8 bg-navy-900/70 backdrop-blur-xl">
@@ -166,7 +197,7 @@ export default function AdminDashboard() {
             <LogoMark className="h-7 w-7" />
             <div className="leading-tight">
               <p className="text-sm font-semibold">Moveasy admin</p>
-              <p className="text-[11px] text-white/55">Waitlist overview</p>
+              <p className="text-[11px] text-white/55">Waitlist &amp; partners</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -280,25 +311,64 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            {/* Table */}
+            {/* Table tabs */}
             <div className="mt-6 overflow-hidden rounded-2xl border border-white/10 bg-white/5">
               <div className="flex flex-col gap-3 border-b border-white/10 p-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/55">
-                    Recent signups
-                  </p>
-                  <p className="mt-1 text-sm text-white/70">
-                    {fmtNumber(filtered.length)} of {fmtNumber(snap.rows.length)} shown
-                  </p>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                  <div className="flex gap-1 rounded-full border border-white/10 bg-white/[0.04] p-1">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setTab("waitlist");
+                        setQuery("");
+                      }}
+                      className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition ${
+                        tab === "waitlist"
+                          ? "bg-white text-navy"
+                          : "text-white/70 hover:text-white"
+                      }`}
+                    >
+                      Waitlist ({fmtNumber(snap.rows.length)})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setTab("partners");
+                        setQuery("");
+                      }}
+                      className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition ${
+                        tab === "partners"
+                          ? "bg-white text-navy"
+                          : "text-white/70 hover:text-white"
+                      }`}
+                    >
+                      Partners ({fmtNumber(snap.partnerTotal)})
+                    </button>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/55">
+                      {tab === "waitlist" ? "Recent signups" : "Partner interest"}
+                    </p>
+                    <p className="mt-1 text-sm text-white/70">
+                      {tab === "waitlist"
+                        ? `${fmtNumber(filtered.length)} of ${fmtNumber(snap.rows.length)} shown`
+                        : `${fmtNumber(filteredPartners.length)} of ${fmtNumber(snap.partners.length)} shown`}
+                    </p>
+                  </div>
                 </div>
                 <input
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Filter by name, city, or email"
+                  placeholder={
+                    tab === "waitlist"
+                      ? "Filter by name, city, or email"
+                      : "Filter by name, role, or email"
+                  }
                   className="h-10 w-full rounded-xl border border-white/10 bg-white/5 px-4 text-sm text-white placeholder:text-white/45 focus:border-white/30 focus:outline-none focus:ring-2 focus:ring-white/15 sm:w-72"
                 />
               </div>
               <div className="overflow-x-auto">
+                {tab === "waitlist" ? (
                 <table className="min-w-full text-sm">
                   <thead>
                     <tr className="border-b border-white/8 text-left text-[10px] uppercase tracking-[0.18em] text-white/45">
@@ -335,6 +405,50 @@ export default function AdminDashboard() {
                     )}
                   </tbody>
                 </table>
+                ) : (
+                <table className="min-w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-white/8 text-left text-[10px] uppercase tracking-[0.18em] text-white/45">
+                      <th className="px-4 py-3 font-semibold">Name</th>
+                      <th className="px-4 py-3 font-semibold">Role</th>
+                      <th className="px-4 py-3 font-semibold">Email</th>
+                      <th className="px-4 py-3 font-semibold">Message</th>
+                      <th className="px-4 py-3 font-semibold text-right">Submitted</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredPartners.map((r) => (
+                      <tr
+                        key={r.id}
+                        className="border-b border-white/5 last:border-b-0 hover:bg-white/[0.03]"
+                      >
+                        <td className="px-4 py-3 text-white">
+                          {r.name ?? <span className="text-white/45">—</span>}
+                        </td>
+                        <td className="px-4 py-3 text-white/80">
+                          {r.role ?? <span className="text-white/45">—</span>}
+                        </td>
+                        <td className="px-4 py-3 text-white/80">{r.email}</td>
+                        <td className="max-w-xs truncate px-4 py-3 text-white/65" title={r.message ?? undefined}>
+                          {r.message ?? <span className="text-white/45">—</span>}
+                        </td>
+                        <td className="px-4 py-3 text-right text-white/65">
+                          {fmtDate(r.created_at)}
+                        </td>
+                      </tr>
+                    ))}
+                    {filteredPartners.length === 0 && (
+                      <tr>
+                        <td colSpan={5} className="px-4 py-10 text-center text-white/55">
+                          {snap.partnerTotal === 0
+                            ? "No partner submissions yet."
+                            : "No entries match that filter."}
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+                )}
               </div>
             </div>
           </>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { Toast, type ToastTone } from "./toast";
 
 const items = [
   {
@@ -49,6 +50,12 @@ const items = [
 
 export function EarlyPartners() {
   const [modalOpen, setModalOpen] = useState(false);
+  const [toast, setToast] = useState<{ message: string; tone: ToastTone } | null>(null);
+
+  function handleSubmitted(message: string, tone: ToastTone) {
+    setToast({ message, tone });
+    setModalOpen(false);
+  }
 
   useEffect(() => {
     if (!modalOpen) return;
@@ -122,12 +129,22 @@ export function EarlyPartners() {
 
           {/* Right: desktop form */}
           <div className="hidden lg:block lg:sticky lg:top-28">
-            <PartnerFormPanel onSuccess={() => {}} />
+            <PartnerFormPanel onSubmitted={handleSubmitted} />
           </div>
         </div>
       </div>
 
-      <PartnerModal open={modalOpen} onClose={() => setModalOpen(false)} />
+      <PartnerModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSubmitted={handleSubmitted}
+      />
+
+      <Toast
+        message={toast?.message ?? null}
+        tone={toast?.tone ?? "success"}
+        onDismiss={() => setToast(null)}
+      />
     </section>
   );
 }
@@ -137,10 +154,10 @@ const ROLES = ["Driver", "Fleet / car owner", "Logistics or B2B", "Partner or in
 type Role = (typeof ROLES)[number];
 
 function PartnerFormPanel({
-  onSuccess,
+  onSubmitted,
   idPrefix = "",
 }: {
-  onSuccess: () => void;
+  onSubmitted: (message: string, tone: ToastTone) => void;
   idPrefix?: string;
 }) {
   const [name, setName] = useState("");
@@ -148,13 +165,11 @@ function PartnerFormPanel({
   const [role, setRole] = useState<Role>("Driver");
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [feedback, setFeedback] = useState<string | null>(null);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (status === "loading" || !email) return;
     setStatus("loading");
-    setFeedback(null);
     try {
       const res = await fetch("/api/partner", {
         method: "POST",
@@ -164,26 +179,24 @@ function PartnerFormPanel({
       const data = (await res.json()) as { ok?: boolean; error?: string };
       if (!res.ok || !data.ok) throw new Error(data.error ?? "Failed");
       setStatus("success");
-      setFeedback("We'll reach out within a day or two.");
       setName("");
       setEmail("");
       setMessage("");
       setRole("Driver");
-      onSuccess();
+      onSubmitted("You're on the early list. We'll reach out within 1–2 days.", "success");
+      setTimeout(() => setStatus("idle"), 400);
     } catch {
       setStatus("error");
-      setFeedback("Something went wrong. Email moveasyhq@gmail.com.");
+      onSubmitted("Something went wrong. Email moveasyhq@gmail.com.", "error");
+      setTimeout(() => setStatus("idle"), 400);
     }
   }
 
-  const inputClass =
-    "h-11 w-full rounded-2xl border border-white/12 bg-navy-900/50 px-4 text-sm text-white placeholder:text-white/45 focus:border-accent/50 focus:outline-none focus:ring-2 focus:ring-accent/20 disabled:opacity-60";
+  const fieldClass =
+    "h-11 w-full rounded-2xl bg-white/[0.06] px-4 text-sm text-white placeholder:text-white/40 focus:bg-white/[0.09] focus:outline-none focus:ring-1 focus:ring-accent/35 disabled:opacity-60";
 
   return (
-    <form
-      onSubmit={onSubmit}
-      className="rounded-3xl border border-white/12 bg-paper/[0.07] p-5 shadow-glass backdrop-blur-sm sm:p-6"
-    >
+    <form onSubmit={onSubmit} className="rounded-3xl bg-white/[0.04] p-5 sm:p-6">
       <p className="text-sm font-medium text-white">Get on the early list</p>
       <p className="mt-1 text-xs text-white/55">We reply within 1–2 business days.</p>
 
@@ -195,7 +208,7 @@ function PartnerFormPanel({
           value={name}
           onChange={(e) => setName(e.target.value)}
           disabled={status === "loading"}
-          className={inputClass}
+          className={fieldClass}
         />
         <input
           id={`${idPrefix}partner-email`}
@@ -205,14 +218,14 @@ function PartnerFormPanel({
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           disabled={status === "loading"}
-          className={inputClass}
+          className={fieldClass}
         />
         <select
           id={`${idPrefix}partner-role`}
           value={role}
           onChange={(e) => setRole(e.target.value as Role)}
           disabled={status === "loading"}
-          className={`${inputClass} appearance-none`}
+          className={`${fieldClass} appearance-none`}
         >
           {ROLES.map((r) => (
             <option key={r} value={r} className="bg-navy-900 text-white">
@@ -222,35 +235,34 @@ function PartnerFormPanel({
         </select>
         <textarea
           id={`${idPrefix}partner-message`}
-          placeholder="Tell us more (optional)"
+          placeholder="Tell us more — fleet size, city, what you're looking for…"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           disabled={status === "loading"}
-          rows={3}
-          className={`${inputClass} resize-none py-3`}
+          rows={5}
+          className="min-h-[130px] w-full resize-y rounded-2xl bg-white/[0.06] px-4 py-3 text-sm text-white placeholder:text-white/40 focus:bg-white/[0.09] focus:outline-none focus:ring-1 focus:ring-accent/35 disabled:opacity-60"
         />
         <button
           type="submit"
           disabled={status === "loading" || !email}
           className="h-11 w-full rounded-2xl bg-white text-sm font-semibold text-navy transition hover:bg-accent hover:text-ink disabled:cursor-not-allowed disabled:opacity-70"
         >
-          {status === "loading" ? "Sending…" : status === "success" ? "Sent ✓" : "Send interest"}
+          {status === "loading" ? "Sending…" : "Send interest"}
         </button>
       </div>
-
-      {feedback && (
-        <p
-          className={`mt-3 text-xs ${status === "error" ? "text-rose-300" : "text-emerald-300"}`}
-          role="status"
-        >
-          {feedback}
-        </p>
-      )}
     </form>
   );
 }
 
-function PartnerModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+function PartnerModal({
+  open,
+  onClose,
+  onSubmitted,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onSubmitted: (message: string, tone: ToastTone) => void;
+}) {
   return (
     <AnimatePresence>
       {open && (
@@ -292,7 +304,7 @@ function PartnerModal({ open, onClose }: { open: boolean; onClose: () => void })
                 </svg>
               </button>
             </div>
-            <PartnerFormPanel idPrefix="modal-" onSuccess={onClose} />
+            <PartnerFormPanel idPrefix="modal-" onSubmitted={onSubmitted} />
           </motion.div>
         </motion.div>
       )}

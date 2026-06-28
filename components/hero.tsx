@@ -45,7 +45,7 @@ export function Hero() {
         aria-hidden
         className="relative z-0 -mt-6 w-full overflow-hidden sm:-mt-8"
       >
-        <div className="h-[185px] sm:h-[220px] md:h-[240px]">
+        <div className="h-[260px] sm:h-[300px] md:h-[320px]">
           <RoadIllustration />
         </div>
       </div>
