@@ -10,6 +10,7 @@ export default function AboutPage() {
     <PageShell
       title="Movement, made easy."
       intro="Moveasy is a WhatsApp-first mobility platform for Nigeria. Book rides, plan trips, and coordinate the way Africa actually moves. No app, no friction."
+      illustration="about"
     >
       <h2>The problem</h2>
       <p>

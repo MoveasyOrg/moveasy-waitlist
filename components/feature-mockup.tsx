@@ -114,8 +114,12 @@ export function FeatureMockup({
       {watermark && (
         <span
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 select-none text-[24vw] font-semibold leading-none tracking-tight opacity-[0.05] sm:text-[16vw]"
+          className="pointer-events-none absolute inset-x-0 bottom-0 select-none whitespace-nowrap text-center text-[22vw] font-semibold leading-none tracking-tight opacity-[0.06] sm:text-[14vw]"
         >
+          {watermark}
+          <span className="mx-4 opacity-60">·</span>
+          {watermark}
+          <span className="mx-4 opacity-60">·</span>
           {watermark}
         </span>
       )}

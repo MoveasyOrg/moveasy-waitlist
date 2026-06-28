@@ -220,8 +220,8 @@ export function RoadIllustration() {
         </linearGradient>
         <linearGradient id="cityFadeH" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stopColor="white" stopOpacity="0" />
-          <stop offset="8%" stopColor="white" stopOpacity="1" />
-          <stop offset="92%" stopColor="white" stopOpacity="1" />
+          <stop offset="3%" stopColor="white" stopOpacity="1" />
+          <stop offset="97%" stopColor="white" stopOpacity="1" />
           <stop offset="100%" stopColor="white" stopOpacity="0" />
         </linearGradient>
         <mask id="cityMask">
@@ -242,15 +242,15 @@ export function RoadIllustration() {
       </defs>
 
       <g mask="url(#cityMask)">
-        {/* Ground band (rounded top so it reads as a horizon) */}
+        {/* Ground band — straight horizon, runs all the way to the SVG edges */}
         <path
-          d="M -20 220 Q 200 160 600 200 T 1220 220 L 1220 620 L -20 620 Z"
+          d="M -40 215 L 1240 215 L 1240 620 L -40 620 Z"
           fill="url(#ground)"
         />
 
         {/* Mountains / hills silhouette behind the buildings */}
         <path
-          d="M -40 230 L 120 170 L 220 220 L 360 160 L 500 220 L 680 180 L 820 230 L 960 170 L 1100 220 L 1240 200 L 1240 260 L -40 260 Z"
+          d="M -60 225 L 80 165 L 200 215 L 340 155 L 480 215 L 620 180 L 760 220 L 900 160 L 1040 215 L 1180 175 L 1260 210 L 1260 260 L -60 260 Z"
           fill="rgba(27,42,143,0.55)"
         />
 
@@ -265,15 +265,21 @@ export function RoadIllustration() {
           ))}
         </g>
 
-        {/* Buildings — far row (smaller, behind) */}
-        <Building x={80} y={210} w={70} h={110} fill="#4351B0" shade="#5C6CD4" cols={2} rows={4} />
-        <Building x={160} y={195} w={60} h={125} fill="#F2A93B" shade="#FFC36C" cols={2} rows={5} />
-        <Building x={240} y={205} w={70} h={115} fill="#FAFAF7" shade="#FFFFFF" cols={3} rows={4} />
-        <Building x={330} y={190} w={60} h={130} fill="#1B2A8F" shade="#3A4BC0" cols={2} rows={5} />
-        <Building x={780} y={200} w={70} h={120} fill="#FAFAF7" shade="#FFFFFF" cols={3} rows={4} />
-        <Building x={870} y={195} w={70} h={125} fill="#F2A93B" shade="#FFC36C" cols={2} rows={5} />
-        <Building x={960} y={210} w={60} h={110} fill="#E94560" shade="#FF7A8A" cols={2} rows={4} />
-        <Building x={1040} y={200} w={60} h={120} fill="#4351B0" shade="#5C6CD4" cols={2} rows={4} />
+        {/* Buildings — spans the full SVG width so the city reaches both edges */}
+        <Building x={-20} y={205} w={70} h={115} fill="#E94560" shade="#FF7A8A" cols={2} rows={4} />
+        <Building x={60} y={200} w={60} h={120} fill="#FAFAF7" shade="#FFFFFF" cols={2} rows={4} />
+        <Building x={130} y={210} w={70} h={110} fill="#4351B0" shade="#5C6CD4" cols={2} rows={4} />
+        <Building x={210} y={195} w={60} h={125} fill="#F2A93B" shade="#FFC36C" cols={2} rows={5} />
+        <Building x={280} y={205} w={70} h={115} fill="#FAFAF7" shade="#FFFFFF" cols={3} rows={4} />
+        <Building x={360} y={190} w={60} h={130} fill="#1B2A8F" shade="#3A4BC0" cols={2} rows={5} />
+        <Building x={430} y={210} w={55} h={110} fill="#7FB069" shade="#A8D08A" cols={2} rows={4} />
+        <Building x={770} y={210} w={55} h={110} fill="#7FB069" shade="#A8D08A" cols={2} rows={4} />
+        <Building x={835} y={200} w={70} h={120} fill="#FAFAF7" shade="#FFFFFF" cols={3} rows={4} />
+        <Building x={915} y={195} w={70} h={125} fill="#F2A93B" shade="#FFC36C" cols={2} rows={5} />
+        <Building x={995} y={210} w={60} h={110} fill="#E94560" shade="#FF7A8A" cols={2} rows={4} />
+        <Building x={1065} y={200} w={60} h={120} fill="#4351B0" shade="#5C6CD4" cols={2} rows={4} />
+        <Building x={1135} y={205} w={70} h={115} fill="#FAFAF7" shade="#FFFFFF" cols={2} rows={4} />
+        <Building x={1215} y={210} w={50} h={110} fill="#F2A93B" shade="#FFC36C" cols={2} rows={4} />
 
         {/* Trees lining the horizon */}
         <Tree cx={50} cy={325} r={16} color="#5b8a4f" />

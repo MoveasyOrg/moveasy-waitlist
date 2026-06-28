@@ -10,6 +10,7 @@ export default function TermsPage() {
     <PageShell
       title="Terms & Conditions"
       intro="Last updated: June 2026. This is a placeholder while we finalise with counsel. Reach us at moveasyhq@gmail.com with any questions."
+      illustration="terms"
     >
       <h2>Who we are</h2>
       <p>

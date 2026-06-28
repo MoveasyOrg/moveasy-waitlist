@@ -10,6 +10,7 @@ export default function PrivacyPage() {
     <PageShell
       title="Privacy Policy"
       intro="Last updated: June 2026. This is a placeholder while we finalise with counsel. Reach us at moveasyhq@gmail.com with any questions."
+      illustration="privacy"
     >
       <h2>What we collect</h2>
       <p>

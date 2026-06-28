@@ -2,14 +2,17 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Nav } from "./nav";
 import { Footer } from "./footer";
+import { PageIllustration, type IllustrationKind } from "./page-illustration";
 
 export function PageShell({
   title,
   intro,
+  illustration,
   children,
 }: {
   title: string;
   intro?: string;
+  illustration?: IllustrationKind;
   children: React.ReactNode;
 }) {
   return (
@@ -28,14 +31,17 @@ export function PageShell({
             </svg>
             Back to home
           </Link>
-          <h1 className="mt-6 text-balance text-4xl font-medium leading-tight tracking-tight sm:text-5xl">
-            {title}
-          </h1>
-          {intro && (
-            <p className="mt-5 max-w-2xl text-pretty text-base text-white/75 sm:text-lg">
-              {intro}
-            </p>
-          )}
+          <div className="relative mt-6">
+            {illustration && <PageIllustration kind={illustration} />}
+            <h1 className="max-w-xl text-balance pr-0 text-4xl font-medium leading-tight tracking-tight sm:pr-48 sm:text-5xl lg:pr-64">
+              {title}
+            </h1>
+            {intro && (
+              <p className="mt-5 max-w-2xl text-pretty pr-0 text-base text-white/75 sm:text-lg">
+                {intro}
+              </p>
+            )}
+          </div>
         </div>
       </section>
 

@@ -1,11 +1,12 @@
 import { PageShell, makeMetadata } from "@/components/page-shell";
+import { Accordion, type AccordionItem } from "@/components/accordion";
 
 export const metadata = makeMetadata(
   "FAQs",
   "Common questions about Moveasy: how it works, coverage, pricing, and safety.",
 );
 
-const faqs: { q: string; a: React.ReactNode }[] = [
+const faqs: AccordionItem[] = [
   {
     q: "Do I need to install anything?",
     a: "No. Open WhatsApp, message the Moveasy number, and you can book a ride. A native app is coming for power users, but the chat is the product.",
@@ -45,13 +46,9 @@ export default function FaqsPage() {
     <PageShell
       title="Questions, answered."
       intro="If something is not covered here, send us a note at moveasyhq@gmail.com."
+      illustration="faqs"
     >
-      {faqs.map((item) => (
-        <div key={item.q}>
-          <h3>{item.q}</h3>
-          <p>{item.a}</p>
-        </div>
-      ))}
+      <Accordion items={faqs} />
     </PageShell>
   );
 }

@@ -6,7 +6,6 @@ type Pin = {
   city: string;
   state: string;
   phase: "Live" | "Q2" | "Q3" | "Q4" | "2027";
-  // Percent positions on the 100x100 SVG
   x: number;
   y: number;
 };
@@ -27,6 +26,12 @@ const phaseColor: Record<Pin["phase"], string> = {
   "2027": "bg-white/25 text-white",
 };
 
+const stats: { label: string; value: string }[] = [
+  { label: "Cities planned", value: "5" },
+  { label: "Live in", value: "Awka" },
+  { label: "Next up", value: "Lagos · Q2" },
+];
+
 export function Coverage() {
   return (
     <section className="relative overflow-hidden bg-navy py-20 sm:py-28">
@@ -45,9 +50,10 @@ export function Coverage() {
           </p>
         </div>
 
-        <div className="mt-12 grid gap-10 lg:grid-cols-[1.1fr,1fr]">
-          <div className="glass-dark relative aspect-[4/5] overflow-hidden rounded-3xl p-4 shadow-glass">
-            <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full">
+        <div className="mt-12 grid gap-6 lg:grid-cols-[1.1fr,1fr] lg:items-stretch">
+          {/* Map */}
+          <div className="glass-dark relative aspect-[4/5] overflow-hidden rounded-3xl p-4 shadow-glass lg:aspect-auto">
+            <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full" preserveAspectRatio="xMidYMid meet">
               <path
                 d="M22 35 L36 22 L62 18 L82 28 L86 52 L78 78 L60 88 L34 84 L20 70 Z"
                 fill="rgba(255,255,255,0.04)"
@@ -81,21 +87,66 @@ export function Coverage() {
             ))}
           </div>
 
-          <ul className="divide-y divide-white/10 rounded-3xl border border-white/10">
-            {pins.map((p) => (
-              <li key={p.city} className="flex items-center justify-between gap-4 px-5 py-4">
-                <div>
-                  <p className="text-base font-medium text-white">{p.city}</p>
-                  <p className="text-xs text-white/55">{p.state}</p>
-                </div>
-                <span
-                  className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${phaseColor[p.phase]}`}
+          {/* Right column: list + stats + CTA */}
+          <div className="flex flex-col gap-6">
+            <ul className="divide-y divide-white/10 rounded-3xl border border-white/10 bg-white/5">
+              {pins.map((p) => (
+                <li
+                  key={p.city}
+                  className="flex items-center justify-between gap-4 px-5 py-3.5"
                 >
-                  {p.phase === "Live" ? "Live" : `Rolling ${p.phase}`}
-                </span>
-              </li>
-            ))}
-          </ul>
+                  <div>
+                    <p className="text-base font-medium text-white">{p.city}</p>
+                    <p className="text-xs text-white/55">{p.state}</p>
+                  </div>
+                  <span
+                    className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${phaseColor[p.phase]}`}
+                  >
+                    {p.phase === "Live" ? "Live" : `Rolling ${p.phase}`}
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            <div className="grid grid-cols-3 gap-3">
+              {stats.map((s) => (
+                <div
+                  key={s.label}
+                  className="rounded-2xl border border-white/10 bg-white/5 p-4"
+                >
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/55">
+                    {s.label}
+                  </p>
+                  <p className="mt-1.5 text-lg font-semibold text-white">
+                    {s.value}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <a
+              href="#waitlist"
+              className="flex items-center justify-between rounded-2xl border border-accent/30 bg-accent/10 px-5 py-4 text-sm font-medium text-white transition hover:border-accent/60 hover:bg-accent/15"
+            >
+              <span>
+                Don&rsquo;t see your city? Join the waitlist anyway.
+              </span>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden
+              >
+                <path d="M5 12h14" />
+                <path d="m13 5 7 7-7 7" />
+              </svg>
+            </a>
+          </div>
         </div>
       </div>
     </section>

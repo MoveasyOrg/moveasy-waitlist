@@ -68,10 +68,34 @@ alter table public.waitlist enable row level security;
 ## Routes
 
 - `/` Landing page
+- `/about`, `/faqs`, `/privacy`, `/terms` Info pages
+- `/admin` Waitlist dashboard (password gated)
+- `/admin/login` Admin sign-in
 - `POST /api/waitlist` Email signup, rate limited per IP
 - `GET /api/waitlist` Live count
+- `POST /api/admin/login` / `POST /api/admin/logout` / `GET /api/admin/signups`
 - `/sitemap.xml`, `/robots.txt`
 - `/opengraph-image` (auto-generated)
+
+## Admin dashboard
+
+Visit `/admin`. The route is gated by `middleware.ts` — without a valid session cookie you're redirected to `/admin/login`.
+
+To enable it, set two env vars on Vercel and locally:
+
+```bash
+ADMIN_PASSWORD="something-long-and-random"
+ADMIN_SESSION_SECRET="$(node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))")"
+```
+
+The dashboard shows:
+- Total / today / last 7 days / last 30 days signup counts
+- 7-day growth vs the previous 7-day window
+- A 14-day daily signups sparkline
+- Top 10 cities
+- A searchable, exportable table of every signup (name, city, email, joined)
+
+CSV export is one click. The route uses `SUPABASE_DB_URL` (the pooler URL) to read directly from Postgres, so it works even without the service role key.
 
 ## Deploy
 
