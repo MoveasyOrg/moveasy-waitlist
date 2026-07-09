@@ -48,11 +48,7 @@ export const metadata: Metadata = {
     title: TITLE,
     description: DESCRIPTION,
   },
-  icons: {
-    icon: [
-      { url: "/brand/favicon.svg", type: "image/svg+xml" },
-    ],
-  },
+  // Icons picked up automatically from app/icon.png + app/apple-icon.png
   manifest: "/site.webmanifest",
   robots: { index: true, follow: true },
 };
