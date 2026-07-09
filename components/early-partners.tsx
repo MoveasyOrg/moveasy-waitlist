@@ -248,7 +248,7 @@ function PartnerFormPanel({
         <button
           type="submit"
           disabled={status === "loading" || !email}
-          className="grid h-11 w-full grid-flow-col items-center justify-center gap-2 rounded-2xl bg-white text-sm font-semibold text-navy transition hover:bg-accent hover:text-ink disabled:cursor-not-allowed disabled:opacity-70"
+          className="grid h-12 w-full grid-flow-col items-center justify-center gap-2 rounded-2xl bg-white text-sm font-medium text-navy transition hover:bg-accent hover:text-ink disabled:cursor-not-allowed disabled:bg-white/85"
           aria-busy={status === "loading"}
         >
           {status === "loading" ? (

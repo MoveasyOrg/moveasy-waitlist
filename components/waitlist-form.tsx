@@ -149,6 +149,7 @@ export function WaitlistForm() {
         message={toast?.message ?? null}
         tone={toast?.tone ?? "success"}
         firstName={toast?.name ?? null}
+        communityUrl={process.env.NEXT_PUBLIC_WA_COMMUNITY_URL || null}
         onDismiss={() => setToast(null)}
       />
     </>

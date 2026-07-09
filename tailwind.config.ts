@@ -5,24 +5,27 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Delivered brand palette (see /bramd-assets-moveasy/Color/Frame 24.png)
         navy: {
-          DEFAULT: "#1B2A8F",
-          50: "#EEF0FB",
-          100: "#D7DBF3",
-          200: "#A5ADDD",
-          300: "#737FC7",
-          400: "#4351B0",
-          500: "#1B2A8F",
-          600: "#152273",
-          700: "#101A57",
-          800: "#0B123B",
-          900: "#060920",
+          DEFAULT: "#14306B",
+          50: "#EEF1F8",
+          100: "#D7DEEE",
+          200: "#A2B0D2",
+          300: "#7286B4",
+          400: "#506694",
+          500: "#2C4882",
+          600: "#14306B",
+          700: "#0F2454",
+          800: "#0A1839",
+          900: "#060B22",
         },
         accent: {
-          DEFAULT: "#F2A93B",
-          soft: "#FFCB6E",
+          // Primary vivid orange from the brand pack
+          DEFAULT: "#EC7501",
+          soft: "#F2A93B",
+          light: "#FCCD87",
         },
-        ink: "#0B123B",
+        ink: "#0A1839",
         paper: "#FAFAF7",
         whatsapp: "#25D366",
       },
@@ -32,14 +35,14 @@ const config: Config = {
       },
       backgroundImage: {
         "hero-radial":
-          "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(67,81,176,0.55) 0%, rgba(27,42,143,0.95) 45%, #0B123B 100%)",
+          "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(80,102,148,0.55) 0%, rgba(20,48,107,0.95) 45%, #0A1839 100%)",
         "glass-pill":
           "linear-gradient(180deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.06) 100%)",
       },
       boxShadow: {
         glass:
-          "inset 0 1px 0 0 rgba(255,255,255,0.15), 0 8px 32px 0 rgba(6,9,32,0.35)",
-        cta: "0 10px 30px -10px rgba(242,169,59,0.6)",
+          "inset 0 1px 0 0 rgba(255,255,255,0.15), 0 8px 32px 0 rgba(6,11,34,0.35)",
+        cta: "0 10px 30px -10px rgba(236,117,1,0.55)",
       },
       animation: {
         "fade-up": "fadeUp 0.6s ease-out both",
